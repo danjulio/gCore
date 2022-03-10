@@ -100,3 +100,38 @@ Uses the following libraries.
 4. TFT_eSPI (see above for a link to my version)
 
 Note that I linked to an obsolete version of the LVGL for Arduino library.  This is because I know this one works.  It may be that the version available through the Arduino library manager also works (but you'll still have to install the ```lv_conf.h``` file.
+
+#### sd_benchmark
+A port of the [ESP32\_SD_Benchmark](https://github.com/moononournation/ESP32_SD_Benchmark) program to gCore.  This test writes and reads a 4MB file to the Micro-SD Card using different block sizes for each communication method (SPI bus, 1-bit data mode, 4-bit data mode).  I found that I couldn't easily switch between communication methods so the test power-cycles gCore between the tests run with each method using the RTC/Alarm capability.  Output is displayed via serial in the Arduino monitor (115200 baud).  Be sure to open the monitor before downloading and running.
+
+Uses the following libraries.
+
+1. gCore
+2. SD, SD_MMC, FS (built-in)
+
+I expect performance will vary with the type of card.  Tests with a Sandisk Extreme 32GB (UHS Speed class) are shown below.  The 4-bit mode pays off when writing files.
+
+
+Write Performance
+
+| Blocksize | HSPI | 1-bit | 4-bit |
+| --- | --- | --- | --- |
+| 1K | 264 KB/s | 426 KB/s | 439 KB/s |
+| 2K | 460 KB/s | 878 KB/s | 937 KB/s |
+| 4K | 893 KB/s | 1674 KB/s | 2135 KB/s |
+| 8K | 1198 KB/s | 2386 KB/s | 3676 KB/s |
+| 16K | 1472 KB/s | 3187 KB/s | 6105 KB/s |
+| 32K | 1629 KB/s | 3689 KB/s | 8905 KB/s |
+| 64K | 1632 KB/s | 3742 KB/s| 9039 KB/s |
+
+Read Performance
+
+| Blocksize | HSPI | 1-bit | 4-bit |
+| --- | --- | --- | --- |
+| 1K | 776 KB/s | 907 KB/s | 1049 KB/s |
+| 2K | 776 KB/s | 913 KB/s | 1056 KB/s |
+| 4K | 774 KB/s | 923 KB/s | 1068 KB/s |
+| 8K | 771 KB/s | 921 KB/s | 1068 KB/s |
+| 16K | 761 KB/s | 932 KB/s | 1084 KB/s |
+| 32K | 749 KB/s | 932 KB/s | 1082 KB/s |
+| 64K | 751 KB/s | 932 KB/s| 1083 KB/s |
