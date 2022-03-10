@@ -22,7 +22,7 @@ The ```lv_conf.h``` file used to configure LVGL for the ```lifx_controller``` de
 Because it appears that Arvind Singh is continuing to evolve his amazing 3D [tgx](https://github.com/vindar/tgx) library, I have included the copy of that library I used for the ```joystick_3d``` demo in case the API changes.  This can be found in the ```supporting ``` subdirectory here.
 
 ### Demo Programs
-Demo program show off various aspects of gCore.  They require additonal libraries listed with each demo description.  The Arduino environment needs to have the ESP32 addition installed and configured for the Wrover Module as shown below.
+Demo programs show off various aspects of gCore.  They require additonal libraries listed with each demo description.  The Arduino environment needs to have the ESP32 addition installed and configured for the Wrover Module as shown below.
 
 ![gCore Arduino setup](Pictures/gcore_arduino_setup.png)
 
@@ -39,6 +39,24 @@ A port of the Adafruit ```graphicstest``` benchmark program using the TFT\_eSPI 
 
 1. Adafruit_GFX
 2. TFT_eSPI (see above for a link to my version)
+
+Results should look like the following.
+
+```
+Benchmark                Time (microseconds)
+Screen fill              159072
+Text                     9702
+Lines                    100609
+Horiz/Vert Lines         14424
+Rectangles (outline)     8061
+Rectangles (filled)      387786
+Circles (filled)         58732
+Circles (outline)        38298
+Triangles (outline)      21696
+Triangles (filled)       137064
+Rounded rects (outline)  18267
+Rounded rects (filled)   392288```
+
 
 #### gcore\_reg_explorer
 A demo program that displays the EFM8 registers, dynamically updated, and provides a command line interface through the serial monitor allowing access to the registers and NVRAM.  Designed to allow easy modification of register values to explore how the EFM8 co-processor works (see the ```Documentation``` directory for address offsets and a description of the registers).  Demonstrates how to use the ```gCore``` library to access the EFM8.
@@ -70,6 +88,23 @@ The Adafruit ```graphicstest``` benchmark program using my gCore\_ILI9488 LCD dr
 
 1. Adafruit_GFX
 2. gCore_ILI9488
+
+Results should look like the following.
+
+```
+Benchmark                Time (microseconds)
+Screen fill              500222
+Text                     91095
+Lines                    2066654
+Horiz/Vert Lines         45573
+Rectangles (outline)     29837
+Rectangles (filled)      1221137
+Circles (filled)         389725
+Circles (outline)        883671
+Triangles (outline)      388336
+Triangles (filled)       567608
+Rounded rects (outline)  257851
+Rounded rects (filled)   1284509```
 
 #### joystick_3d
 A port of Arvind Singh's Naruto demo using his tgx 3D graphic library.  Spin around a model of the character Naruto Uzumaki displayed as a 3D surface with or without a texture map or shading. Makes use of tasks running on both CPUs to improve performance.  Supports an optional Sparkfun [I2C joystick](https://www.sparkfun.com/products/15168) plugged into the Qwiic interface to manually control the view (pan/zoom/switch shaders).
