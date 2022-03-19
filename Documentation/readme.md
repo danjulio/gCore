@@ -112,9 +112,10 @@ The EFM8 co-processor performs a variety of functions for gCore.  It operates in
 2. Charge Monitoring - Provides charge status to the ESP32, controls the charge LED.
 3. Real Time Clock with Alarm - Stores real time as a 32-bit integer incremented each second with an alarm function that can be used to switch power on.  gCore library functions store epoch time and provide conversion functions to/from standard time units.
 4. Internal current and voltage monitoring - Monitor and make available USB voltage and input current, battery voltage and load current to the ESP32.
-5. Non-volatile RAM with partial flash backup - Provides 4096 bytes of RAM for use by the ESP32 to store information that can survive ESP32 power cycles.  The RAM is maintained as long as the EFM8 has power (battery installed).  Provides 1024 bytes of flash-based storage that can survive EFM8 power cycles (battery removal).
-6. Backlight brightness control - Set backlight PWM value.
-7. Micro-SD card detection - Monitors the Micro-SD card present switch as status for the ESP32.
+5. Non-volatile RAM with partial flash backup - Provides 4096 bytes of NVRAM for use by the ESP32 to store information that can survive ESP32 power cycles.  The NVRAM is maintained as long as the EFM8 has power (battery installed).
+6. Provides 1024 bytes of flash-based storage that can survive EFM8 power cycles (battery removal).
+7. Backlight brightness control - Set backlight PWM value.
+8. Micro-SD card detection - Monitors the Micro-SD card present switch as status for the ESP32.
 
 The ```gCore``` Arduino library contains functions for accessing the EFM8 from ESP32 code.
 
@@ -215,13 +216,13 @@ The Shutdown register is used to switch power off.  Writing the value 0x0F to th
 The Power Button Short Press Time register controls the period of time the button must be pressed to detect a press to either turn power on or be noted by the Power Button Short Press detected bit in the Status register when power is already on (for example to initiate a soft power off).  It is set in units of 10 mSec intervals with legal values 2-255 representing 20 mSec to 2.55 seconds.  Upon power-on (battery attachment) the EFM8 sets this register to 100 (for a detection period of 1 second).
 
 ##### NV Control Register
-The NV Control register is used to trigger a save of the first 1024 bytes of NVRAM to EFM8 flash storage to allow this data to persist over EFM8 power cycles (battery removal) or to read the EFM8 flash storage values into NVRAM.
+The NV Control register is used to trigger a save of the first 1024 bytes of NVRAM to EFM8 flash storage to allow this data to persist over EFM8 power cycles (battery removal), or to read the EFM8 flash storage values into the first 1024 bytes of NVRAM (the remaining 3072 bytes are unaffected).
 
-Writing 0x57 ('W') to the register triggers a write of NVRAM to flash.
+Writing 0x57 ('W') to the register triggers a write of NVRAM to flash.  Wait at least 36 mSec after triggering the write before accessing the EFM8 as it will not respond to I2C cycles while it is erasing the flash memory in preparation to write to it.
 
 Writing 0x52 ('R') to the register triggers a read of flash into NVRAM.
 
-Writing NVRAM to flash takes several tens of milliseconds.  The register may be polled to determine when the write (or read) is complete.  It will return the value 1 while the operation is in progress and the value of 0 when the operation is complete.
+Writing NVRAM to flash takes up to approximately 128 milliseconds.  The register may be polled (after waiting an initial 36 mSec) to determine when the write is complete.  It will return the value 1 while the write is in progress and the value of 0 when the write is complete.  However it is possible for the I2C read cycle to fail if part of it occurs just as a write is occuring internal to the EFM8.  For this reason code must either deal with a failed read or just want 36 + 128 = 164 mSec before accessing the EFM8.
 
 ##### Time Register
 The Time register contains a value that is incremented every second.  It is designed to work with an epoch time system (starting Jan 1, 1970).  It is an unsigned 32-bit value and, if used with the epoch time system, will roll over in the year 2106.
@@ -247,10 +248,14 @@ A negative value is used to correct a fast RTC.  A value of 1 is subtracted from
 Upon power-on (battery attachment) the EFM8 sets this register to 0.  A value of 0 has no effect on the Time register (performs no correction).
 
 #### NVRAM / Flash Storage
-The EFM8 provides 4096 bytes of RAM at address offset 0 - 0x0FFF.  This RAM is maintained as long as the EFM8 has power (battery attached).  It may be used by the ESP32 to store persistent values if the application does not want to use the ESP32's built-in persistent storage mechanisms (for example if the ESP32 flash will often be completely erased).
+The EFM8 provides 4096 bytes of NVRAM at address offset 0 - 0x0FFF.  This RAM is maintained as long as the EFM8 has power (battery attached).  It may be used by the ESP32 to store persistent values if the application does not want to use the ESP32's built-in persistent storage mechanisms (for example if the ESP32 flash will often be completely erased).
 
-The EFM8 also provides 1024 bytes of flash memory that can be used to back the first 1024 bytes of RAM.  This flash is contained in a high-endurance block (20000 writes).
-
-The flash is copied to the first 1024 bytes of RAM when power is applied to the EFM8 (battery attachment).  Code running on the ESP32 can copy the first 1024 bytes of RAM back to flash using the NV Control register.  After this the values copied will be restored to RAM in the even the battery is disconnected and reconnected.  Code on the ESP32 can also overwrite the RAM with the values stored in flash at any time using the NV Control register.
+The EFM8 also provides 1024 bytes of flash memory that can be used to back the first 1024 bytes of NVRAM.  This flash is copied to the first 1024 bytes of RAM when power is applied to the EFM8 (battery attachment).  Code running on the ESP32 can copy the first 1024 bytes of NVRAM back to flash using the NV Control register.  After this the values copied will be restored to NVRAM in the even the battery is disconnected and reconnected.  Code on the ESP32 can also overwrite the NVRAM with the values stored in flash at any time using the NV Control register.
 
 Initially the flash contains the value 0xFF in each byte.  This means on power-on (battery attachment) the first 1024 bytes of RAM will contain the value 0xFF and the remaining 3072 bytes of RAM will contain the value 0.
+
+Important notes
+
+1. The EFM8 datasheet specifies a typical erase/write endurance for the flash memory of 30k cycles.  However it also specifies a minimum of only 1k cycles.  This is probably under worst case conditions but you should only copy the NVRAM to flash when absolutely necessary.  Don't do it when it isn't necessary.
+2. Wait at least 36 mSec after triggering a copy of NVRAM to flash memory using the NV_CONTROL register before accessing the EFM8 as it will not respond to I2C cycles while it is erasing the flash memory in preparation to write to it.
+3. During the process of writing the NVRAM to flash the EFM8 will occasionally become unresponsive (during the actual flash write) and it is possible I2C cycles to it will fail.  The writing process takes 128 mSec at maximum so it may just be easier to wait for 36 + 128 = 164 mSec after triggering the write operation before accessing the EFM8 again.
