@@ -15,5 +15,11 @@ This respository contains documentation, an Arduino library with example code, a
 ### Support in other Github repositories
 Demos and ports of other software to gCore are stored in the following additional repositories to reduce the size of this repository.
 
+1. [TFT_eSPI](https://github.com/danjulio/TFT_eSPI) - A fork of Bodmer's LCD driver library ported to gCore to maximize LCD drawing performance for Arduino programs.  Very fast.
+2. [gcore_life](https://github.com/danjulio/gcore_life) - Life running on gCore using LVGL.  Shows how to integrate control for gCore into an ESP32 IDF program.
+3. [gcore\_lv\_port_esp32](https://github.com/danjulio/gcore_lv_port_esp32) - The LVGL v7 demo with gCore optimized LCD and touch drivers useful for for ESP32 IDF programs.
+
+![Life!](pictures/life.png)
+
 ### (*) Historical Note
 This is actually my second design.  The original gCore design was based around a "feather" PCB designed to fit under an Adafruit LCD module.  It is documented in the [Original gCore](https://github.com/danjulio/gCore) respository and is why this repository is called gCore2.
