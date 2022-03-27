@@ -10,13 +10,16 @@ Copy the ```gCore``` directory into your Arduino libraries folder.
 There are other libraries, in addition to the gCore library, that have been ported to support gCore or are used by the gCore demos.
 
 #### TFT_eSPI Port
-I configured a version of Bodmer's fantastic [TFT\_eSPI](https://github.com/Bodmer/TFT_eSPI) library to support gCore as an Adafruit compatible LCD driver.  It is incredibly fast and even though I wrote my own ILI9488 library I'd advise using this when possible.  I put this version in its own repository [here](https://github.com/danjulio/TFT_eSPI).  Download and install it as an Arduino library.  You may have to temporarily move aside any other version of TFT_eSPI you have when you compile for gCore.
+A version of Bodmer's fantastic [TFT\_eSPI](https://github.com/Bodmer/TFT_eSPI) library configured to support gCore as an Adafruit compatible LCD driver can be found in its own repository [here](https://github.com/danjulio/TFT_eSPI).  It is incredibly fast and even though I wrote my own ILI9488 library I'd advise using this when possible.  Download and install it as an Arduino library.  You may have to temporarily move aside any other version of TFT_eSPI you have when you compile for gCore.
 
 ### LIFX
 I extended Peter Hum's excellent [LIFX](https://github.com/peter-hum/LIFX) library to support color capable bulbs as well as to be able to query the bulb and identify it and its capabilities.  I put this version in its own repository [here](https://github.com/danjulio/LIFX).  Use this version with the ```lifx_controller``` demo.
 
 ### lv_arduino
-The ```lv_conf.h``` file used to configure LVGL for the ```lifx_controller``` demo may be found in the ```supporting``` subdirectory here.
+LVGL is configured for a particular project using a ```lv_conf.h``` file located at the top of the library directory.  Among many other things it tells LVGL the display resolution and enables various sizes of the built-in fonts.  The following preconfigured files are included in the ```supporting``` subdirectory here for use with the LVGL demos.  The associated file should be copied to the LVGL Arduino library directory and renamed ```lv_conf.h```.
+
+1. ```lv_conf_landscape.h``` is used with ```hex_calculator```.
+2. ```lv_conf_portrait.h``` is used with ```lifx_controller```.
 
 ### tgx
 Because it appears that Arvind Singh is continuing to evolve his amazing 3D [tgx](https://github.com/vindar/tgx) library, I have included the copy of that library I used for the ```joystick_3d``` demo in case the API changes.  This can be found in the ```supporting ``` subdirectory here.
@@ -38,7 +41,7 @@ A port of the Adafruit CapTouchPaint program.  Uses the following libraries.
 A port of the Adafruit ```graphicstest``` benchmark program using the TFT\_eSPI library.  Blazing fast.  Uses the following libraries.
 
 1. Adafruit_GFX
-2. TFT_eSPI (see above for a link to my version)
+2. TFT_eSPI (see above for a link to the gCore version)
 
 Results should look like the following.
 
@@ -84,7 +87,7 @@ Uses the following libraries.
 4. Adafruit_FT6206
 
 #### graphicstest
-The Adafruit ```graphicstest``` benchmark program using my gCore\_ILI9488 LCD driver.  No slouch compared to other ILI9488 driver's I played with but not as fast as TFT_eSPI.  Uses the following libraries.
+The Adafruit ```graphicstest``` benchmark program using the gCore\_ILI9488 LCD driver.  No slouch compared to other ILI9488 driver's I played with but not as fast as TFT_eSPI.  Uses the following libraries.
 
 1. Adafruit_GFX
 2. gCore_ILI9488
@@ -106,6 +109,21 @@ Triangles (filled)       567608
 Rounded rects (outline)  257851
 Rounded rects (filled)   1284509```
 
+#### hex_calculator
+A simple programmer's calculator inspired by the Apple OS X calculator program, but with the features I wanted.  Uses LVGL to create the GUI and makes use of gCore NVRAM to store calculator state and memory between power cycles.  Supports configurable bit lengths from 8 - 64 bits and operates in either decimal or hexadecimal modes.
+
+![Hex Calculator Demo](Pictures/hex_calculator.png)
+
+Be sure to replace the default ```lv_conf.h``` file in the LVGL Arduino library with ```lv_conf_landscape.h``` file in the ```supporting``` directory here.  This configures LVGL to the correct resolution and landscape orientation used by the demo.
+
+Uses the following libraries.
+
+1. gCore
+2. LVGL for Arduino ([lv_arduino](https://github.com/lvgl/lv_arduino/releases/tag/3.0.1))
+3. TFT_eSPI (see above for a link to the gCore version)
+
+Note that I linked to an obsolete version of the LVGL for Arduino library.  This is because I know this one works.  It may be that the version available through the Arduino library manager also works (but you'll still have to install the ```lv_conf.h``` file.
+
 #### joystick_3d
 A port of Arvind Singh's Naruto demo using his tgx 3D graphic library.  Spin around a model of the character Naruto Uzumaki displayed as a 3D surface with or without a texture map or shading. Makes use of tasks running on both CPUs to improve performance.  Supports an optional Sparkfun [I2C joystick](https://www.sparkfun.com/products/15168) plugged into the Qwiic interface to manually control the view (pan/zoom/switch shaders).
 
@@ -125,16 +143,14 @@ A demo remote control application that connects to Wifi and discovers any [LIFX]
 
 Be sure to set your Wifi credentials in the USER CONFIGURATION section of the ```lifx_controller.ino``` file.  You should have one or more LIFX LED bulbs previously setup on the same Wifi.
 
-Also be sure to replace the default ```lv_conf.h``` file in the LVGL Arduino library with the version in the ```supporting``` directory here.  This configures LVGL to the correct resolution and portrait orientation used by the demo.
+Also be sure to replace the default ```lv_conf.h``` file in the LVGL Arduino library with ```lv_conf_portrait.h``` file in the ```supporting``` directory here.  This configures LVGL to the correct resolution and portrait orientation used by the demo.
 
 Uses the following libraries.
 
 1. gCore
-2. LVGL for Arduino ([lv_arduino](https://github.com/lvgl/lv_arduino))
+2. LVGL for Arduino ([lv_arduino](https://github.com/lvgl/lv_arduino/releases/tag/3.0.1))
 3. LIFX (see above for a link to my version)
 4. TFT_eSPI (see above for a link to my version)
-
-Note that I linked to an obsolete version of the LVGL for Arduino library.  This is because I know this one works.  It may be that the version available through the Arduino library manager also works (but you'll still have to install the ```lv_conf.h``` file.
 
 #### play_mjpeg
 Plays mjpeg files from the Micro-SD Card.  Uses the serial interface to select a file to play (open the Arduino serial monitor at 115200 baud).  Video file resolution must be 480x320 pixels max.  Large resolution videos might require you to increase the jpeg buffer (MJPEG\_BUF_LEN define) or re-encode the video with lower quality.
@@ -157,7 +173,7 @@ Uses the following libraries.
 1. gCore
 2. SD, SD_MMC, FS (built-in)
 
-I expect performance will vary with the type of card.  Tests with a Sandisk Extreme 32GB (UHS Speed class) are shown below.  The 4-bit mode pays off when writing files.
+Performance will probably vary with the type of card.  Tests with a Sandisk Extreme 32GB (UHS Speed class) are shown below.  The 4-bit mode pays off when writing files.
 
 
 Write Performance
