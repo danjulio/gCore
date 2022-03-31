@@ -50,7 +50,7 @@ A port of the Adafruit ```graphicstest``` benchmark program using the TFT\_eSPI 
 1. Adafruit_GFX
 2. TFT_eSPI for gCore
 
-Results should look like the following.
+Results should look like the following (open the serial monitor at 115200 baud).
 
 ```
 Benchmark                Time (microseconds)
@@ -168,12 +168,16 @@ Uses the following libraries.
 
 1. SD, SD_MMC (built-in)
 2. TFT_eSPI for gCore
-3. TJpg_Decoder (available in the Arduino library manager or found [here](https://github.com/Bodmer/TJpg_Decoder)).
+3. TJpg_Decoder (available in the Arduino library manager or found [here](https://github.com/Bodmer/TJpg_Decoder) - see note below).
 
 There are two example video files in the ```supporting/mjpeg_files``` directory in this repository.  These should be copied to a Micro-SD card and that card inserted before running the sketch.  The ```bbb10fps.mjp``` file is a transcoded version of the cute [Big Buck Bunny](https://peach.blender.org/) released under the Creative Commons license.  Encoded for 10 FPS, it plays back slightly fast at around 13.5 FPS.  The ```pexels.mjp``` file was transcoded from a video found at [pexels.com](https://www.pexels.com/videos/) originally created by Uzunov Rostislav.  It plays back at around 10 FPS.
 
+When entering a filename to play using the serial monitor, be sure to include the "/" prefix (e.g. ```/bbb10fps.mjp```.
+
+Note: Install version 0.0.3 of TJpg\_Decoder if you have ESP32 version 1.X.X installed.  Install version 1.0.2 of TJpg\_Decoder if you have ESP32 version 2.X.X installed.  This is because Bodmer made changes to the TJpg\_Decoder library that make version 1.0.2 incompatible with version 1.X ESP32 board support packages (see [here](https://github.com/Bodmer/TJpg_Decoder/issues/30)).
+
 #### sd_benchmark
-A port of the [ESP32\_SD_Benchmark](https://github.com/moononournation/ESP32_SD_Benchmark) program to gCore.  This test writes and reads a 4MB file to the Micro-SD Card using different block sizes for each communication method (SPI bus, 1-bit data mode, 4-bit data mode).  I found that I couldn't easily switch between communication methods so the test power-cycles gCore between the tests run with each method using the RTC/Alarm capability.  Output is displayed via serial in the Arduino monitor (115200 baud).  Be sure to open the monitor before downloading and running.
+A port of the [ESP32\_SD_Benchmark](https://github.com/moononournation/ESP32_SD_Benchmark) program to gCore.  This test writes and reads a 4MB file to the Micro-SD Card using different block sizes for each communication method (SPI bus, 1-bit data mode, 4-bit data mode).  I found that I couldn't easily switch between communication methods so the test power-cycles gCore between the tests run with each method using the RTC/Alarm capability and storing the test type in NVRAM.  Output is displayed via serial in the Arduino monitor (115200 baud).  Be sure to open the monitor before downloading and running.  There is nothing displayed on the LCD for this sketch.
 
 Uses the following libraries.
 
@@ -206,3 +210,8 @@ Read Performance
 | 16K | 761 KB/s | 932 KB/s | 1084 KB/s |
 | 32K | 749 KB/s | 932 KB/s | 1082 KB/s |
 | 64K | 751 KB/s | 932 KB/s| 1083 KB/s |
+
+
+### Note about SD Cards and gCore programming
+
+It's possible that a high logic level from a Micro-SD Card on the IO2 pin will cause programming to fail.  Retry after removing and re-inserting the Micro-SD Card if this occurs.
