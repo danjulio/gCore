@@ -6,17 +6,24 @@ Copy the ```gCore``` directory into your Arduino libraries folder.
 1. ```gCore``` contains a class that interfaces with the EFM8 co-processor and includes time functions.
 2. ```gCore_ILI9488``` contains an Adafruit compatible display driver for gCore's ILI9488 LCD controller.  It can be used anywhere an Adafruit driver would be used.  It is not as fast as the TFT\_eSPI library but provides a good example of how to interface with the ILI9488, including setup code.
 
-### Other libraries ported to gCore
-There are other libraries, in addition to the gCore library, that have been ported to support gCore or are used by the gCore demos.
+### Other libraries used by gCore demos
+There are other libraries, in addition to the gCore library, that have been ported to support gCore or are used by the gCore demos.  Important ones are described here.
+
+#### Adafruit Graphics libraries
+The ```Adafruit_GFX``` and ```Adafruit_FT6206``` graphic libraries can be downloaded using the Arduino library manager (Select ```Sketch->Include Library->Manage Libaries...```).
+
+![Arduino Library Manager](Pictures/arduino_library_manager.png)
 
 #### TFT_eSPI Port
-A version of Bodmer's fantastic [TFT\_eSPI](https://github.com/Bodmer/TFT_eSPI) library configured to support gCore as an Adafruit compatible LCD driver can be found in its own repository [here](https://github.com/danjulio/TFT_eSPI).  It is incredibly fast and even though I wrote my own ILI9488 library I'd advise using this when possible.  Download and install it as an Arduino library.  You may have to temporarily move aside any other version of TFT_eSPI you have when you compile for gCore.
+A version of Bodmer's fantastic Adafruit-compatible TFT\_eSPI library configured to support gCore as an Adafruit compatible LCD driver can be found in its own repository [here](https://github.com/danjulio/TFT_eSPI).  It is incredibly fast and even though I wrote my own ILI9488 library I'd advise using this when possible.  Download and install it as an Arduino library.  You may have to temporarily move aside any other version of TFT_eSPI you have when you compile for gCore (since his library is configured for each type of display).  Bodmer's original code can be found in his [repository](https://github.com/Bodmer/TFT_eSPI).
 
 ### LIFX
-I extended Peter Hum's excellent [LIFX](https://github.com/peter-hum/LIFX) library to support color capable bulbs as well as to be able to query the bulb and identify it and its capabilities.  I put this version in its own repository [here](https://github.com/danjulio/LIFX).  Use this version with the ```lifx_controller``` demo.
+I extended Peter Hum's excellent LIFX library to support color capable bulbs as well as to be able to query the bulb and identify it and its capabilities.  I put this version in its own repository [here](https://github.com/danjulio/LIFX).  Use this version with the ```lifx_controller``` demo.  Peter's original code can found in his [repository](https://github.com/peter-hum/LIFX).
 
 ### lv_arduino
-LVGL is configured for a particular project using a ```lv_conf.h``` file located at the top of the library directory.  Among many other things it tells LVGL the display resolution and enables various sizes of the built-in fonts.  The following preconfigured files are included in the ```supporting``` subdirectory here for use with the LVGL demos.  The associated file should be copied to the LVGL Arduino library directory and renamed ```lv_conf.h```.
+The ```lv_arduino``` (LVGL for Arduino) library can also be downloaded using the Arduino library manager.  I used v3.0.1 for these demos.  In case a new version breaks these demos, you should be able to download v3.0.1 from [here](https://github.com/lvgl/lv_arduino/releases/tag/3.0.1).
+
+LVGL is configured for a particular project using a ```lv_conf.h``` file located at the top of the library directory.  Among many other things it tells LVGL the display resolution and enables various sizes of the built-in fonts.  The following preconfigured files are included in the ```supporting``` subdirectory here for use with the gCore demos.  The associated file should be copied to the LVGL Arduino library directory and renamed ```lv_conf.h```.
 
 1. ```lv_conf_landscape.h``` is used with ```hex_calculator```.
 2. ```lv_conf_portrait.h``` is used with ```lifx_controller```.
@@ -25,7 +32,7 @@ LVGL is configured for a particular project using a ```lv_conf.h``` file located
 Because it appears that Arvind Singh is continuing to evolve his amazing 3D [tgx](https://github.com/vindar/tgx) library, I have included the copy of that library I used for the ```joystick_3d``` demo in case the API changes.  This can be found in the ```supporting ``` subdirectory here.
 
 ### Demo Programs
-Demo programs show off various aspects of gCore.  They require additonal libraries listed with each demo description.  The Arduino environment needs to have the ESP32 addition installed and configured for the Wrover Module as shown below.
+Demo programs show off various aspects of gCore.  They require additonal libraries listed with each demo description.  The Arduino environment needs to have the ESP32 addition installed using the Board Manager and configured for the Wrover Module as shown below.
 
 ![gCore Arduino setup](Pictures/gcore_arduino_setup.png)
 
@@ -34,16 +41,16 @@ A port of the Adafruit CapTouchPaint program.  Uses the following libraries.
 
 1. gCore
 2. gCore_ILI9488
-3. Adafruit_GFX (available in Library manager)
-4. Adafruit_FT6206 (available in Library manager)
+3. Adafruit_GFX
+4. Adafruit_FT6206
 
 #### eTFT_graphicstest
 A port of the Adafruit ```graphicstest``` benchmark program using the TFT\_eSPI library.  Blazing fast.  Uses the following libraries.
 
 1. Adafruit_GFX
-2. TFT_eSPI (see above for a link to the gCore version)
+2. TFT_eSPI for gCore
 
-Results should look like the following.
+Results should look like the following (open the serial monitor at 115200 baud).
 
 ```
 Benchmark                Time (microseconds)
@@ -119,8 +126,8 @@ Be sure to replace the default ```lv_conf.h``` file in the LVGL Arduino library 
 Uses the following libraries.
 
 1. gCore
-2. LVGL for Arduino ([lv_arduino](https://github.com/lvgl/lv_arduino/releases/tag/3.0.1))
-3. TFT_eSPI (see above for a link to the gCore version)
+2. lv_arduino
+3. TFT_eSPI for gCore
 
 Note that I linked to an obsolete version of the LVGL for Arduino library.  This is because I know this one works.  It may be that the version available through the Arduino library manager also works (but you'll still have to install the ```lv_conf.h``` file.
 
@@ -132,9 +139,9 @@ A port of Arvind Singh's Naruto demo using his tgx 3D graphic library.  Spin aro
 Uses the following libraries.
 
 1. gCore
-2. Sparkfun\_Qwiic\_Joystick\_Arduino\_Library (available in Library manager or from the product page)
-3. TFT_eSPI (see above for a link to my version)
-4. tgx (available in ```supporting ```)
+2. Sparkfun\_Qwiic\_Joystick\_Arduino\_Library (available in Library manager or from the [product](https://www.sparkfun.com/products/15168) page)
+3. TFT_eSPI for gCore
+4. tgx
 
 #### lifx_controller
 A demo remote control application that connects to Wifi and discovers any [LIFX](https://www.lifx.com/) LED light bulbs that have also been configured on that Wifi.  It then uses the [LVGL](https://lvgl.io/) graphics library to display a GUI interface that may be used to control the bulbs.  A drop-down menu lists all discovered bulbs. Selecting a bulb displays an appropriate touch control interface for the bulb.  For example a color-temperature dimmable white bulb will display a brightness and color temperature graphic.  Touching on the graphic controls the bulb.  A color capable bulb displays a color picker, brightness and color temperature graphics.
@@ -148,9 +155,9 @@ Also be sure to replace the default ```lv_conf.h``` file in the LVGL Arduino lib
 Uses the following libraries.
 
 1. gCore
-2. LVGL for Arduino ([lv_arduino](https://github.com/lvgl/lv_arduino/releases/tag/3.0.1))
-3. LIFX (see above for a link to my version)
-4. TFT_eSPI (see above for a link to my version)
+2. lv_arduino
+3. LIFX
+4. TFT_eSPI for gCore
 
 #### play_mjpeg
 Plays mjpeg files from the Micro-SD Card.  Uses the serial interface to select a file to play (open the Arduino serial monitor at 115200 baud).  Video file resolution must be 480x320 pixels max.  Large resolution videos might require you to increase the jpeg buffer (MJPEG\_BUF_LEN define) or re-encode the video with lower quality.
@@ -160,13 +167,17 @@ Plays mjpeg files from the Micro-SD Card.  Uses the serial interface to select a
 Uses the following libraries.
 
 1. SD, SD_MMC (built-in)
-2. TFT_eSPI
-3. TJpg_Decoder (Downloaded using the Arduino library manager or found [here](https://github.com/Bodmer/TJpg_Decoder)).
+2. TFT_eSPI for gCore
+3. TJpg_Decoder (available in the Arduino library manager or found [here](https://github.com/Bodmer/TJpg_Decoder) - see note below).
 
 There are two example video files in the ```supporting/mjpeg_files``` directory in this repository.  These should be copied to a Micro-SD card and that card inserted before running the sketch.  The ```bbb10fps.mjp``` file is a transcoded version of the cute [Big Buck Bunny](https://peach.blender.org/) released under the Creative Commons license.  Encoded for 10 FPS, it plays back slightly fast at around 13.5 FPS.  The ```pexels.mjp``` file was transcoded from a video found at [pexels.com](https://www.pexels.com/videos/) originally created by Uzunov Rostislav.  It plays back at around 10 FPS.
 
+When entering a filename to play using the serial monitor, be sure to include the "/" prefix (e.g. ```/bbb10fps.mjp```.
+
+Note: Install version 0.0.3 of TJpg\_Decoder if you have ESP32 version 1.X.X installed.  Install version 1.0.2 of TJpg\_Decoder if you have ESP32 version 2.X.X installed.  This is because Bodmer made changes to the TJpg\_Decoder library that make version 1.0.2 incompatible with version 1.X ESP32 board support packages (see [here](https://github.com/Bodmer/TJpg_Decoder/issues/30)).
+
 #### sd_benchmark
-A port of the [ESP32\_SD_Benchmark](https://github.com/moononournation/ESP32_SD_Benchmark) program to gCore.  This test writes and reads a 4MB file to the Micro-SD Card using different block sizes for each communication method (SPI bus, 1-bit data mode, 4-bit data mode).  I found that I couldn't easily switch between communication methods so the test power-cycles gCore between the tests run with each method using the RTC/Alarm capability.  Output is displayed via serial in the Arduino monitor (115200 baud).  Be sure to open the monitor before downloading and running.
+A port of the [ESP32\_SD_Benchmark](https://github.com/moononournation/ESP32_SD_Benchmark) program to gCore.  This test writes and reads a 4MB file to the Micro-SD Card using different block sizes for each communication method (SPI bus, 1-bit data mode, 4-bit data mode).  I found that I couldn't easily switch between communication methods so the test power-cycles gCore between the tests run with each method using the RTC/Alarm capability and storing the test type in NVRAM.  Output is displayed via serial in the Arduino monitor (115200 baud).  Be sure to open the monitor before downloading and running.  There is nothing displayed on the LCD for this sketch.
 
 Uses the following libraries.
 
@@ -199,3 +210,8 @@ Read Performance
 | 16K | 761 KB/s | 932 KB/s | 1084 KB/s |
 | 32K | 749 KB/s | 932 KB/s | 1082 KB/s |
 | 64K | 751 KB/s | 932 KB/s| 1083 KB/s |
+
+
+### Note about SD Cards and gCore programming
+
+It's possible that a high logic level from a Micro-SD Card on the IO2 pin will cause programming to fail.  Retry after removing and re-inserting the Micro-SD Card if this occurs.

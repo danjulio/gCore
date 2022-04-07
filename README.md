@@ -19,7 +19,7 @@ Demos and ports of other software to gCore are stored in the following additiona
 2. [gcore_life](https://github.com/danjulio/gcore_life) - Life running on gCore using LVGL.  Shows how to integrate control for gCore into an ESP32 IDF program.
 3. [gcore\_lv\_port_esp32](https://github.com/danjulio/gcore_lv_port_esp32) - The LVGL v7 demo with gCore optimized LCD and touch drivers useful for for ESP32 IDF programs.
 
-![Life!](pictures/life.png)
+![Life!](Pictures/life.png)
 
 ### (*) Historical Note
 This is actually my second design.  The original gCore design was based around a "feather" PCB designed to fit under an Adafruit LCD module.  It is documented in the [Original gCore](https://github.com/danjulio/gCore) respository and is why this repository is called gCore2.
