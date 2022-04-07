@@ -1,35 +1,49 @@
 ## gCore Arduino Library
 
 ### Arduino Library
-Copy the ```gCore``` directory into your Arduino libraries folder.
+Copy the ```gCore``` directory into your Arduino libraries folder.  It contains two libraries.
 
-1. ```gCore``` contains a class that interfaces with the EFM8 co-processor and includes time functions.
+1. ```gCore``` contains a class that interfaces with the EFM8 co-processor and provides control and time functions.
 2. ```gCore_ILI9488``` contains an Adafruit compatible display driver for gCore's ILI9488 LCD controller.  It can be used anywhere an Adafruit driver would be used.  It is not as fast as the TFT\_eSPI library but provides a good example of how to interface with the ILI9488, including setup code.
 
 ### Other libraries used by gCore demos
-There are other libraries, in addition to the gCore library, that have been ported to support gCore or are used by the gCore demos.  Important ones are described here.
+There are other libraries, in addition to the gCore libraries, that have been ported to support gCore or are used by the gCore demos.
 
-#### Adafruit Graphics libraries
-The ```Adafruit_GFX``` and ```Adafruit_FT6206``` graphic libraries can be downloaded using the Arduino library manager (Select ```Sketch->Include Library->Manage Libaries...```).
+1. ```Adafruit_FT6206``` (v1.0.6) - Download using Arduino library manager.
+2. ```Adafruit_GFX``` (v1.6.1) - Download using Arduino library manager.
+3. ```LIFX``` - Use my version downloaded from [here](https://github.com/danjulio/LIFX).
+4. ```lv_arduino``` (v3.0.1) - Download using Arduino library manager (see note below).
+5. ```Sparkfun_Qwiic_Joystick_Arduino_Library``` (v1.1.1) - Download using Arduino library manager.
+6. ```tgx``` - Use my version found in the ```supporting``` directory here (see note below).
+7. ```TJpg_Decoder``` (see note below for version) - Download using the Arduino library manager or found [here](https://github.com/Bodmer/TJpg_Decoder).
+8. ```TFT_eSPI``` - Use my version downloaded from [here](https://github.com/danjulio/LIFX) (see note below).
+
+### Library notes
+
+#### Arduino Library Manager
+To open the Arduino Library Manager, select ```Sketch->Include Library->Manage Libaries...```.
 
 ![Arduino Library Manager](Pictures/arduino_library_manager.png)
 
-#### TFT_eSPI Port
-A version of Bodmer's fantastic Adafruit-compatible TFT\_eSPI library configured to support gCore as an Adafruit compatible LCD driver can be found in its own repository [here](https://github.com/danjulio/TFT_eSPI).  It is incredibly fast and even though I wrote my own ILI9488 library I'd advise using this when possible.  Download and install it as an Arduino library.  You may have to temporarily move aside any other version of TFT_eSPI you have when you compile for gCore (since his library is configured for each type of display).  Bodmer's original code can be found in his [repository](https://github.com/Bodmer/TFT_eSPI).
+#### LIFX Port
+I extended [Peter Hum's](https://github.com/peter-hum/LIFX) excellent ```LIFX``` library to support color capable bulbs as well as to be able to query the bulb and identify it and its capabilities.  The additional functionality is used by the ```lifx_controller``` demo.  Peter's original code won't work with the demo.
 
-### LIFX
-I extended Peter Hum's excellent LIFX library to support color capable bulbs as well as to be able to query the bulb and identify it and its capabilities.  I put this version in its own repository [here](https://github.com/danjulio/LIFX).  Use this version with the ```lifx_controller``` demo.  Peter's original code can found in his [repository](https://github.com/peter-hum/LIFX).
-
-### lv_arduino
-The ```lv_arduino``` (LVGL for Arduino) library can also be downloaded using the Arduino library manager.  I used v3.0.1 for these demos.  In case a new version breaks these demos, you should be able to download v3.0.1 from [here](https://github.com/lvgl/lv_arduino/releases/tag/3.0.1).
+#### lv_arduino
+The ```lv_arduino``` (LVGL for Arduino) library can be downloaded using the Arduino library manager.  I used v3.0.1 for these demos.  In case a new version breaks these demos, you should be able to download v3.0.1 from [here](https://github.com/lvgl/lv_arduino/releases/tag/3.0.1).
 
 LVGL is configured for a particular project using a ```lv_conf.h``` file located at the top of the library directory.  Among many other things it tells LVGL the display resolution and enables various sizes of the built-in fonts.  The following preconfigured files are included in the ```supporting``` subdirectory here for use with the gCore demos.  The associated file should be copied to the LVGL Arduino library directory and renamed ```lv_conf.h```.
 
 1. ```lv_conf_landscape.h``` is used with ```hex_calculator```.
 2. ```lv_conf_portrait.h``` is used with ```lifx_controller```.
 
-### tgx
+#### tgx
 Because it appears that Arvind Singh is continuing to evolve his amazing 3D [tgx](https://github.com/vindar/tgx) library, I have included the copy of that library I used for the ```joystick_3d``` demo in case the API changes.  This can be found in the ```supporting ``` subdirectory here.
+
+#### TJpg_Decoder
+Install version 0.0.3 of ```TJpg_Decoder``` if you have ESP32 Arduino version 1.X installed.  Install version 1.0.2 if you have ESP32 Arduino version 2.X installed.  This is because Bodmer made changes to the TJpg\_Decoder library that make version 1.0.2 incompatible with version 1.X ESP32 board support packages (see the explanation [here](https://github.com/Bodmer/TJpg_Decoder/issues/30)).
+
+#### TFT_eSPI Port
+[Bodmer's] (https://github.com/Bodmer/TFT_eSPI) fantastic Adafruit-compatible TFT\_eSPI library is incredibly fast and even though I wrote my own ILI9488 library I'd advise using it when possible.  However it must be configured for each type of display it will use.  My configuration customizations for the ILI9488 LCD controller, gCore specific GPIO pins and 80 MHz SPI operation are found in my [fork](https://github.com/danjulio/TFT_eSPI).  Download and install it as an Arduino library.  You may have to temporarily move aside any other version of TFT_eSPI you have when you compile for gCore.
 
 ### Demo Programs
 Demo programs show off various aspects of gCore.  They require additonal libraries listed with each demo description.  The Arduino environment needs to have the ESP32 addition installed using the Board Manager and configured for the Wrover Module as shown below.
@@ -43,6 +57,15 @@ A port of the Adafruit CapTouchPaint program.  Uses the following libraries.
 2. gCore_ILI9488
 3. Adafruit_GFX
 4. Adafruit_FT6206
+
+#### dual_touch
+A simple demo showing how to use the dual touch detection capability of the FT6236 touchscreen controller.  Displays a circle around each of one or two touch points.  Note that the FT6236 seems to have a bug where, when two touch points are vertically aligned, it reports one touch with a position somewhere between them.
+
+Uses the following libraries.
+
+1. gCore
+2. gCore_ILI9488
+3. Adafruit_GFX
 
 #### eTFT_graphicstest
 A port of the Adafruit ```graphicstest``` benchmark program using the TFT\_eSPI library.  Blazing fast.  Uses the following libraries.
@@ -82,7 +105,7 @@ Uses the following libraries.
 3. Adafruit_GFX
 
 #### gcore_rtc
-A demo program that displays a clock to demonstrate use of the EFM8's RTC and Alarm functions.  Use a simple touch interface to set the time and an alarm, then turn gCore off and watch it automatically switch back on when the alarm time passes.
+A demo program that displays a clock to demonstrate use of the EFM8's RTC and Alarm functions.  Use a simple touch interface to set the time and an alarm, enable the alarm by pressing ```ALARM```then turn gCore off by pressing the ```OFF``` button.  It will automatically switch back on when the alarm time passes.
 
 ![gCore RTC Demo](Pictures/gcore_rtc.png)
 
@@ -121,7 +144,7 @@ A simple programmer's calculator inspired by the Apple OS X calculator program, 
 
 ![Hex Calculator Demo](Pictures/hex_calculator.png)
 
-Be sure to replace the default ```lv_conf.h``` file in the LVGL Arduino library with ```lv_conf_landscape.h``` file in the ```supporting``` directory here.  This configures LVGL to the correct resolution and landscape orientation used by the demo.
+Be sure to replace the default ```lv_conf.h``` file in the LVGL Arduino library with ```lv_conf_landscape.h``` file in the ```supporting``` directory here.  This configures LVGL to the correct resolution and landscape orientation, and enables the two fonts used by the demo.
 
 Uses the following libraries.
 
@@ -129,17 +152,15 @@ Uses the following libraries.
 2. lv_arduino
 3. TFT_eSPI for gCore
 
-Note that I linked to an obsolete version of the LVGL for Arduino library.  This is because I know this one works.  It may be that the version available through the Arduino library manager also works (but you'll still have to install the ```lv_conf.h``` file.
-
 #### joystick_3d
-A port of Arvind Singh's Naruto demo using his tgx 3D graphic library.  Spin around a model of the character Naruto Uzumaki displayed as a 3D surface with or without a texture map or shading. Makes use of tasks running on both CPUs to improve performance.  Supports an optional Sparkfun [I2C joystick](https://www.sparkfun.com/products/15168) plugged into the Qwiic interface to manually control the view (pan/zoom/switch shaders).
+A port of Arvind Singh's Naruto demo using his tgx 3D graphic library.  Spin around a model of the character Naruto Uzumaki displayed as a 3D surface with or without a texture map or shading. Makes use of tasks running on both CPUs to improve performance.  Supports an optional Sparkfun [I2C joystick](https://www.sparkfun.com/products/15168) plugged into the Qwiic interface to manually control the view (pan/zoom/switch shaders).  Be sure to uncomment the line ```#define USE_JOYSTICK``` just below the comments at the top of the sketch to include support for the joystick.
 
 ![joystick_3d Demo](Pictures/joystick_3d.png)
 
 Uses the following libraries.
 
 1. gCore
-2. Sparkfun\_Qwiic\_Joystick\_Arduino\_Library (available in Library manager or from the [product](https://www.sparkfun.com/products/15168) page)
+2. Sparkfun\_Qwiic\_Joystick\_Arduino\_Library (only needed if ```USE_JOYSTICK``` is defined)
 3. TFT_eSPI for gCore
 4. tgx
 
@@ -168,13 +189,11 @@ Uses the following libraries.
 
 1. SD, SD_MMC (built-in)
 2. TFT_eSPI for gCore
-3. TJpg_Decoder (available in the Arduino library manager or found [here](https://github.com/Bodmer/TJpg_Decoder) - see note below).
+3. TJpg_Decoder
 
 There are two example video files in the ```supporting/mjpeg_files``` directory in this repository.  These should be copied to a Micro-SD card and that card inserted before running the sketch.  The ```bbb10fps.mjp``` file is a transcoded version of the cute [Big Buck Bunny](https://peach.blender.org/) released under the Creative Commons license.  Encoded for 10 FPS, it plays back slightly fast at around 13.5 FPS.  The ```pexels.mjp``` file was transcoded from a video found at [pexels.com](https://www.pexels.com/videos/) originally created by Uzunov Rostislav.  It plays back at around 10 FPS.
 
-When entering a filename to play using the serial monitor, be sure to include the "/" prefix (e.g. ```/bbb10fps.mjp```.
-
-Note: Install version 0.0.3 of TJpg\_Decoder if you have ESP32 version 1.X.X installed.  Install version 1.0.2 of TJpg\_Decoder if you have ESP32 version 2.X.X installed.  This is because Bodmer made changes to the TJpg\_Decoder library that make version 1.0.2 incompatible with version 1.X ESP32 board support packages (see [here](https://github.com/Bodmer/TJpg_Decoder/issues/30)).
+When entering a filename to play using the serial monitor, be sure to include the "/" prefix (e.g. ```/bbb10fps.mjp```).
 
 #### sd_benchmark
 A port of the [ESP32\_SD_Benchmark](https://github.com/moononournation/ESP32_SD_Benchmark) program to gCore.  This test writes and reads a 4MB file to the Micro-SD Card using different block sizes for each communication method (SPI bus, 1-bit data mode, 4-bit data mode).  I found that I couldn't easily switch between communication methods so the test power-cycles gCore between the tests run with each method using the RTC/Alarm capability and storing the test type in NVRAM.  Output is displayed via serial in the Arduino monitor (115200 baud).  Be sure to open the monitor before downloading and running.  There is nothing displayed on the LCD for this sketch.
