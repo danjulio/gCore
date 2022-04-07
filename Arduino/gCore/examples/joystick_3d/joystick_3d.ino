@@ -33,18 +33,30 @@
  * using a Qwiic cable to the Qwiic connectonr on gCore.  Make sure the 
  * joystick is in the middle position when starting the code.  This demo
  * does not require the joystick and will work in an animated fashion 
- * without it.
+ * without it.  Be sure to uncomment the line
+ * 
+ * #define USE_JOYSTICK
+ * 
+ * to use the joystick.
  * 
  ********************************************************************/
+
+// Uncomment this line to compile with support for the Sparkfun joystick
+//#define USE_JOYSTICK
+
+// Include files
 #include "gCore.h"
-#include "SparkFun_Qwiic_Joystick_Arduino_Library.h"
 #include <TFT_eSPI.h>
 #include <tgx.h>
 
-// the mesh to draw
+#ifdef USE_JOYSTICK
+#include "SparkFun_Qwiic_Joystick_Arduino_Library.h"
+#endif
+
+// Mesh to draw
 #include "naruto.h"
 
-// let's not burden ourselves with the tgx:: prefix
+// Don't require always using the tgx:: prefix
 using namespace tgx;
 
 #define SWAP_BYTES(d) (d = d << 8 | d >> 8)
@@ -56,7 +68,9 @@ gCore gc = gCore();
 TFT_eSPI tft = TFT_eSPI();
 
 // Joystick driver
+#ifdef USE_JOYSTICK
 JOYSTICK joystick;
+#endif
 
 // Joystick center offset values
 #define JOYSTICK_GB 32
@@ -148,12 +162,14 @@ void setup()
     tft.startWrite();
 
     // Get baseline readings from the joystick
+#ifdef USE_JOYSTICK
     if (joystick.begin()) {
         joystick_present = true;
         // Read joystick until it's about centered
         get_joystick_center_offsets();
         Serial.printf("Detected joystick - center: %d %d\n", j_center_x, j_center_y);
     }
+#endif
 
     // Setup the 3D renderer
     renderer.setZbuffer(zbuf, SLX * SLY); // set the z buffer for depth testing
@@ -174,6 +190,7 @@ void loop()
 }
 
 
+#ifdef USE_JOYSTICK
 void get_joystick_center_offsets()
 {
   int i;
@@ -202,6 +219,7 @@ void get_joystick_center_offsets()
   }
   j_center_y /= 4;
 }
+#endif
 
 
 
@@ -338,8 +356,9 @@ void moveModel(fMat4* M, bool* btn)
   static float tz = -25;
   static float roty = 0;
 
+#ifdef USE_JOYSTICK
   if (joystick_present) {
-  // Check for the joystick button press
+    // Check for the joystick button press
     *btn = joystick.checkButton() != 0;
     
     // Read the joystick, apply a guard band then compute a range -1 to 1 for each axis
@@ -364,6 +383,7 @@ void moveModel(fMat4* M, bool* btn)
     }
     //Serial.printf("%d %d -> %f %f\n", jx, jy, djx, djy);
   } else {
+#endif
     // Automatic animation is based on number of frames
     *btn = ((num_evals % 25) == 0);
 
@@ -371,7 +391,9 @@ void moveModel(fMat4* M, bool* btn)
       // Flip zoom
       djy *= -1.0;
     }
+#ifdef USE_JOYSTICK
   }
+#endif
 
   // Compute rotaton based on horizontal axis
   roty += djx * 10;
