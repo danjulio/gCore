@@ -17,9 +17,14 @@
  *   3. TFT_eSPI ported to gCore
  * 
  * This code configures the display to operate in Landscape mode.  The lv_conf.h file
- * in the LVGL library directory must be configured to match
+ * in the LVGL library directory must be configured to match and to enable both 16-
+ * and 28-point Montserrat fonts.
  *   #define LV_HOR_RES_MAX          (480)
  *   #define LV_VER_RES_MAX          (320)
+ *   
+ *   #define LV_FONT_MONTSERRAT_16   1
+ *   #define LV_FONT_MONTSERRAT_28   1
+ *   
  */
 #include "gCore.h"
 #include <lvgl.h>
