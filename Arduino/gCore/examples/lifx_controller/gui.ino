@@ -265,6 +265,14 @@ void gui_setup_device_controls()
         lv_obj_set_hidden(im_w_brightness_picker, false);
         lv_obj_set_hidden(im_w_switch, true);
         break;
+      case WHITE:
+        lv_obj_set_hidden(im_color_picker, true);
+        lv_obj_set_hidden(im_c_warmth_picker, true);
+        lv_obj_set_hidden(im_c_brightness_picker, true);
+        lv_obj_set_hidden(im_w_warmth_picker, true);
+        lv_obj_set_hidden(im_w_brightness_picker, false);
+        lv_obj_set_hidden(im_w_switch, true);
+        break;
       default:
         lv_obj_set_hidden(im_color_picker, true);
         lv_obj_set_hidden(im_c_warmth_picker, true);
