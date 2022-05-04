@@ -58,6 +58,27 @@ A port of the Adafruit CapTouchPaint program.  Uses the following libraries.
 3. Adafruit_GFX
 4. Adafruit_FT6206
 
+#### disp\_mjpg_stream
+Displays a mjpeg video stream from an ESP32 CAM running the ```esp32-cam-webserver``` sketch found in the ```supporting``` directory.  The ESP32 CAM board acts as a WiFi access point and gCore connects to the camera, initiates a raw stream and uses both CPUs to receive the stream, parse it into individual jpeg images, and then decode and display them.
+
+![Display streaming mjpeg demo](Pictures/disp_mjpg_stream.png)
+
+Uses the following libraries.
+
+1. gCore
+2. TFT_eSPI for gCore
+3. TJpg_Decoder
+
+The pre-configured ```esp32-cam-webserver``` sketch in ```supporting``` is based on Owen Carter's modified ESP32 cam program ([link](https://github.com/easytarget/esp32-cam-webserver)).  By default it is configured to run on an [AI Thinker](http://www.ai-thinker.com/pro_view-24.html) or compatible board but supports most of the standard ESP32 camera boards.  Instructions for programming the board may be found in the ```README.md``` file in the sketch's main folder.
+
+The camera is configured for CIF resolution (400 x 296 pixels) but the ```disp_mjpg_stream``` sketch should handle any resolution up to 480 x 320 pixels.  By modifying it to point to another mjpeg stream it should be able to work with other streaming sources.  Frame rate is primarily limited by the jpeg decode process and scene complexity.  I saw the following typical performance.
+
+| Resolution | Frame Rate (Frames/Sec) |
+| --- | --- |
+| CIF 400x296 | ~7 FPS |
+| QVGA 320x240 | ~10.5 FPS |
+| QQVGA 160x120 | ~23 FPS |
+
 #### dual_touch
 A simple demo showing how to use the dual touch detection capability of the FT6236 touchscreen controller.  Displays a circle around each of one or two touch points.  Note that the FT6236 seems to have a bug where, when two touch points are vertically aligned, it reports one touch with a position somewhere between them.
 
@@ -231,6 +252,22 @@ Read Performance
 | 64K | 751 KB/s | 932 KB/s| 1083 KB/s |
 
 
-### Note about SD Cards and gCore programming
+##### Note about SD Cards and gCore programming
 
 It's possible that a high logic level from a Micro-SD Card on the IO2 pin will cause programming to fail.  Retry after removing and re-inserting the Micro-SD Card if this occurs.
+
+#### shake\_2_wake
+An example of how to use a low-power external circuit, powered by gCore's always-on 3.3V power rail, to drive the SW input low turning the system on as the result of some external event.  Simply picking gCore up can switch it on.  Useful for applications such as remote controls.
+
+An ADXL362 ultra low-power accelerometer is configured to drive its INT1 output low upon motion detection.  The INT1 output is connected to the SW input so that motion detection will turn gCore on.  The sketch reconfigures the ADXL362 into normal operating mode and disables driving INT1 so that it can read acceleration data and display it in a repeating graph on the LCD display.  When gCore is turned off by pressing the power button, or after five minutes of operation, the ADXL362 is configured back into motion detection mode capable of driving INT1 again.
+
+![Shake to Wake](Pictures/shake_2_wake.png)
+
+This sketch also shows how to configure and use the ESP32 HSPI peripheral for use as a SPI master.  This is necessary because the default VSPI peripheral that is used for the default ESP32 Arduino SPI library is unavailable on gCore (VSPI is used to drive the LCD display).
+
+The ADXL362 is available on a Sparkfun [breakout board](https://www.sparkfun.com/products/11446) and wired to gCore as shown below.  The 1 k-ohm resistor prevents an accidental short condition where the ADXL362 could be driving a logic high on INT1 when the SW input is pulled low as the user presses the power button.
+
+![Accelerometer Connections](Pictures/accel_wiring.png)
+(Board photos courtesy of Sparkfun - [CC BY 2.0](eativecommons.org/licenses/by/2.0/))
+
+The sketch should be able to be be adapted for other accelerometer chips.
