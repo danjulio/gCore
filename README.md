@@ -22,4 +22,4 @@ Demos and ports of other software to gCore are stored in the following additiona
 ![Life!](Pictures/life.png)
 
 ### (*) Historical Note
-This is actually my second design.  The original gCore design was based around a "feather" PCB designed to fit under an Adafruit LCD module.  It is documented in the [Original gCore](https://github.com/danjulio/gCore) respository and is why this repository is called gCore2.
+This is actually my second design.  The original gCore design was based around a "feather" PCB designed to fit under an Adafruit LCD module.  It is documented in the [Original gCore](https://github.com/danjulio/gCore-featherwing) repository.
