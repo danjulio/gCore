@@ -271,3 +271,6 @@ The ADXL362 is available on a Sparkfun [breakout board](https://www.sparkfun.com
 (Board photos courtesy of Sparkfun - [CC BY 2.0](eativecommons.org/licenses/by/2.0/))
 
 The sketch should be able to be be adapted for other accelerometer chips.
+
+#### shake\_2\_wake\_lifx\_controller
+A mash-up of ```shake_2_wake``` and ```lifx_controller```.  Just grab the remote and go!
