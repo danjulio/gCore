@@ -40,7 +40,7 @@
 
 // Stream URL string - change this to connect to a different source.  It should
 // point to a raw mjpeg stream with resolution 480x320 or less.
-#define STREAM_URL "192.168.4.1"
+#define STREAM_IP   "192.168.4.1"
 #define STREAM_PORT 81
 
 

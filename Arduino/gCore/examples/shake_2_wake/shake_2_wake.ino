@@ -26,7 +26,7 @@
    The ADXL362 accelerometer communicates using a SPI interface.  It is connected to gCore
    using the following following connections:
 
-   H3LIS331DL    gCore
+     ADXL362    gCore
    -----------------------------------------------------------------------------------
       GND        GND
       3.3V       VI (always-on 3.3V output)
@@ -34,7 +34,7 @@
       SCLK       GPIO 25 (SCLK)
       MOSI       GPIO 26 (MOSI)
       MISO       GPIO 34 (MISO)
-      INT1       SW (switch input) through a 1 k-ohm resistor (see note below)
+      INT1       SW (switch input) through a 1 k-ohm resistor
 
    Since, by default, the ESP32 Arduino package uses the ESP32 VSPI peripheral for the default
    Arduino SPI interface.  However gCore uses that for the dedicated LCD interface so we must
