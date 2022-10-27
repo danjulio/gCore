@@ -213,7 +213,7 @@ void setup() {
       delay(100);
     }
   } else {
-    tft.printf("  Version: %d.%d", reg8 >> 8, reg8 & 0x0F);
+    tft.printf("  Version: %d.%d", reg8 >> 4, reg8 & 0x0F);
   }
 
   tft.setTextColor(ILI9488_DARKGREEN);
