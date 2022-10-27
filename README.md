@@ -13,13 +13,16 @@ This respository contains documentation, an Arduino library with example code, a
 ![gCore Features and Benefits](Pictures/gcore_feat_benefits.png)
 
 ### Support in other Github repositories
-Demos and ports of other software to gCore are stored in the following additional repositories to reduce the size of this repository.
+Additional demos and ports of other software to gCore are stored in the following additional repositories to reduce the size of this repository.
 
 1. [TFT_eSPI](https://github.com/danjulio/TFT_eSPI) - A fork of Bodmer's LCD driver library ported to gCore to maximize LCD drawing performance for Arduino programs.  Very fast.
 2. [gcore_life](https://github.com/danjulio/gcore_life) - Life running on gCore using LVGL.  Shows how to integrate control for gCore into an ESP32 IDF program.
 3. [gcore\_lv\_port_esp32](https://github.com/danjulio/gcore_lv_port_esp32) - The LVGL v7 demo with gCore optimized LCD and touch drivers useful for for ESP32 IDF programs.
+4. [gcore_tank](https://github.com/danjulio/gcore_tank) - An easy-to-build remote controlled vehicle with video feed using gCore and the remote control.
 
 ![Life!](Pictures/life.png)
+
+![Remote Controlled Tank](Pictures/tank_gcore.png)
 
 ### (*) Historical Note
 This is actually my second design.  The original gCore design was based around a "feather" PCB designed to fit under an Adafruit LCD module.  It is documented in the [Original gCore](https://github.com/danjulio/gCore-featherwing) repository.
