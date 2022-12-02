@@ -1,9 +1,9 @@
 ## gCore Documentation
-This directory contains gCore documentation.
+This directory contains gCore documentation with PDF files stored in the ```Documents``` directory.
 
 ### gCore Subsystems
 
-![gCore Block Diagram](gCore_block_diagram.png)
+![gCore Block Diagram](Pictures/gCore_block_diagram.png)
 
 1. CPU - Dual-core ESP32 with 16 MB Flash and 8 MB PSRAM.
 2. Display - 480 x 320 pixel TFT LCD with ILI9488 controller, FT6236 capacitive touchscreen and PWM-based backlight control.  SPI-to-Parallel converter allows operation of the Display SPI peripheral at up to the maximum 80 MHz.
@@ -32,14 +32,20 @@ The EFM8 prevents power on if the battery voltage is 3.5V or less.
 
 ### Display
 #### LCD Controller
-The ILI9488 LCD controller is configured with an 8-bit parallel interface.  A serial-to-parallel converter, shown in ```gCore_serial_to_parallel.png```, connects the LCD controller to the ESP32 VSPI peripheral dedicated pins.  This allows driving the LCD controller at the maximum SPI clock rate of 80 MHz.  There are some specific timing requirements, described below, that must be followed.
+The ILI9488 LCD controller is configured with an 8-bit parallel interface.  A serial-to-parallel converter connects the LCD controller to the ESP32 VSPI peripheral dedicated pins.  This allows driving the LCD controller at the maximum SPI clock rate of 80 MHz.
 
-1. CSN asserted before first rising edge of SCLK: min 20 nS
-2. CSN hold after final edge of SCLK: min 100 nS
-3. MOSI setup to rising edge of SCLK: min 4 nS
-4. MOSI hold after rising edge of SCLK: min 2 nS
-5. DC asserted before CSN asserted: min 0 nS
-6. DC hold after final edge of SCLK: min 100 nS
+![Serial-to-parallel converter](Pictures/gCore_serial_to_parallel.png)
+
+There are some specific timing requirements, described below, that must be followed.
+
+| Specification | min | max |
+| --- | --- | --- |
+| CSN asserted before first rising edge of SCLK | 20 nS | |
+| CSN hold after final edge of SCLK | 100 nS | |
+| MOSI setup to rising edge of SCLK | 4 nS | |
+| MOSI hold after rising edge of SCLK | 2 nS | |
+| DC asserted before CSN asserted | 0 nS | |
+| DC hold after final edge of SCLK | 100 nS | |
 
 Primarily the CSN signal must be de-asserted after the final SCLK rising edge.  This is handled automatically by the Arduino gCore LCD driver and the ported eSPI_TFT libraries but must be specified as shown below when configuring the VSPI peripheral directly in the IDF.
 
@@ -136,6 +142,8 @@ Register read cycles are shown below.
 
 | Register | Register Address | Size | Type | Description |
 | --- | ---| --- | --- | --- |
+| NVRAM | 0x0 - 0x3FF | 8-bit | RW | Non-volatile RAM with Flash backup |
+| | 0x400 - 0xFFF | 8-bit | RW | Non-volatile RAM |
 | ID | 0x1000 | 8-bit | RO | Firmware ID |
 | VER | 0x1001 | 8-bit | RO | Firmare Version |
 | STATUS | 0x1002 | 8-bit | RO | Device Status |
@@ -222,7 +230,7 @@ Upon power-on (wake) the EFM8 sets this register to 0.  It is up to code running
 The Shutdown register is used to switch power off.  Writing the value 0x0F to this register turns off the switched 3.3V and raw battery supply rails.  Writing any other value has no effect.  Register read values are undefined.
 
 ##### Power Button Short Press Time Register
-The Power Button Short Press Time register controls the period of time the button must be pressed to detect an ESP32 visible short press.  When power is off a short press turns power on.  When power is on pressing the button for longer than the specified time and then releasing it sets the Power Button Short Press detected bit in the Status register.  It is set in units of 10 mSec intervals with legal values 2-255 representing 20 mSec to 2.55 seconds.  Upon power-on (battery attachment) the EFM8 sets this register to 100 (for a detection period of 1 second).
+The Power Button Short Press Time register controls the period of time the button must be pressed to detect an ESP32 visible short press.  When power is off, a short press turns power on.  When power is on pressing the button for longer than the specified time and then releasing it sets the Power Button Short Press detected bit in the Status register.  It is set in units of 10 mSec intervals with legal values 2-255 representing 20 mSec to 2.55 seconds.  Upon power-on (battery attachment) the EFM8 sets this register to 100 (for a detection period of 1 second).
 
 ##### NV Control Register
 The NV Control register is used to trigger a save of the first 1024 bytes of NVRAM to EFM8 flash storage to allow this data to persist over EFM8 power cycles (battery removal), or to read the EFM8 flash storage values into the first 1024 bytes of NVRAM (the remaining 3072 bytes are unaffected).
@@ -231,7 +239,7 @@ Writing 0x57 ('W') to the register triggers a write of NVRAM to flash.  Wait at 
 
 Writing 0x52 ('R') to the register triggers a read of flash into NVRAM.
 
-Writing NVRAM to flash takes up to approximately 128 milliseconds.  The register may be polled (after waiting an initial 36 mSec) to determine when the write is complete.  It will return the value 1 while the write is in progress and the value of 0 when the write is complete.  However it is possible for the I2C read cycle to fail if part of it occurs just as a write is occuring internal to the EFM8.  For this reason code must either be able to deal with a failed reads or just wait 36 + 128 = 164 mSec before accessing the EFM8.
+Writing NVRAM to flash takes up to approximately 128 milliseconds.  The register may be polled (after waiting an initial 36 mSec) to determine when the write is complete.  It will return the value 1 while the write is in progress and the value of 0 when the write is complete.  However it is possible for the I2C read cycle to fail if part of it occurs just as a write is occurring internal to the EFM8.  For this reason code must either be able to deal with a failed reads or just wait 36 + 128 = 164 mSec before accessing the EFM8.
 
 ##### Time Register
 The Time register contains a value that is incremented every second.  It is designed to work with an epoch time system (starting Jan 1, 1970).  It is an unsigned 32-bit value and, if used with the epoch time system, will roll over in the year 2106.
@@ -270,3 +278,8 @@ Important notes:
 1. The EFM8 datasheet specifies a typical erase/write endurance for the flash memory of 30k cycles.  However it also specifies a minimum of only 1k cycles.  This is probably under worst case conditions but you should only copy the NVRAM to flash when necessary.  Avoid implementations that update flash blindly (e.g. when there is no difference between flash and NVRAM).
 2. Wait at least 36 mSec after triggering a copy of NVRAM to flash memory using the NV_CONTROL register before accessing the EFM8 as it will not respond to I2C cycles while it is erasing the flash memory in preparation to write to it.
 3. During the process of writing the NVRAM to flash the EFM8 will occasionally become unresponsive (during the actual flash write) and it is possible I2C cycles to it will fail.  The writing process takes a maximum of 128 mSec so it may just be easier to wait for 36 + 128 = 164 mSec after triggering the write operation before accessing the EFM8 again.
+
+
+### Dimensions
+
+![gCore Dimensions](Pictures/gCore_dimensions.png)
