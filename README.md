@@ -11,7 +11,7 @@ This repository contains documentation and example code for an ESP32-based devel
 (gCore controlling LIFX LED light bulbs via Wifi)
 
 ### Supporting documentation and code
-This respository contains documentation, an Arduino library with example code, and designs for 3D printed enclosures.
+This repository contains documentation, an Arduino library with example code, and designs for 3D printed enclosures.
 
 ![gCore Features and Benefits](Pictures/gcore_feat_benefits.png)
 
@@ -19,7 +19,7 @@ This respository contains documentation, an Arduino library with example code, a
 Additional demos and ports of other software to gCore are stored in the following additional repositories to reduce the size of this repository.
 
 1. [TFT_eSPI](https://github.com/danjulio/TFT_eSPI) - A fork of Bodmer's LCD driver library ported to gCore to maximize LCD drawing performance for Arduino programs.  Very fast.
-2. [tCam](https://github.com/danjuliodesigns/tCam/tCam) - Assembly instructions and firmware for the tCam thermal imaging camera.
+2. [tCam](https://github.com/danjulio/tCam) - Assembly instructions and firmware for the tCam thermal imaging camera.
 3. [gcore_life](https://github.com/danjulio/gcore_life) - Life running on gCore using LVGL.  Shows how to integrate control for gCore into an ESP32 IDF program.
 4. [gcore\_lv\_port_esp32](https://github.com/danjulio/gcore_lv_port_esp32) - The LVGL v7 demo with gCore optimized LCD and touch drivers useful for for ESP32 IDF programs.
 5. [gcore_tank](https://github.com/danjulio/gcore_tank) - An easy-to-build remote controlled vehicle with video feed using gCore and the remote control.
