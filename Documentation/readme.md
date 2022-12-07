@@ -36,6 +36,8 @@ The ILI9488 LCD controller is configured with an 8-bit parallel interface.  A se
 
 ![Serial-to-parallel converter](Pictures/gCore_serial_to_parallel.png)
 
+The 8-bit parallel interface allows both 16-bit (2-byte RGB565) and 18-bit (3-byte RGB666) pixels.  Sixteen-bit pixels are not available when using a SPI interface directly to the ILI9488 so you may find other ILI9488 drivers performing extra work to convert 16-bit pixels to 24-bits.
+
 There are some specific timing requirements, described below, that must be followed.
 
 | Specification | min | max |
