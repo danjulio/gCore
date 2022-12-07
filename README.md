@@ -2,7 +2,7 @@
 
 ![gCore Top](Pictures/gcore_rev3.png)
  
-This repository contains documentation and example code for an ESP32-based development board I designed to enable building portable GUI-based gadgets (*).  It provides a rich feature set and high performance operation enabling, I hope, all kinds of cool and useful devices such as remote controls, instrument controllers and game platforms.  Code may be written using the ESP32 Arduino environment or with Espressif's IDF.  Both Adafruit-compatible and [LVGL](https://lvgl.io) LCD drivers are available.
+This repository contains documentation and example code for an ESP32-based development board I designed to enable building portable GUI-based gadgets (*).  It provides a rich feature set and high performance operation enabling, I hope, all kinds of cool and useful devices such as remote controls, instrument controllers and game platforms.  Code may be written using the ESP32 Arduino environment, Espressif's IDF or Micropython.  Both Adafruit-compatible and [LVGL](https://lvgl.io) LCD drivers are available.
 
 ![gCore based tCam](Pictures/tcam_iron.png)
 (gCore based tCam thermal imaging camera)
