@@ -11,7 +11,7 @@ This repository contains documentation and example code for an ESP32-based devel
 (gCore controlling LIFX LED light bulbs via Wifi)
 
 ### Supporting documentation and code
-This repository contains documentation, an Arduino library with example code, and designs for 3D printed enclosures.
+This repository contains documentation, firmware, an Arduino library with example code, and designs for 3D printed enclosures.
 
 ![gCore Features and Benefits](Pictures/gcore_feat_benefits.png)
 
