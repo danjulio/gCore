@@ -603,15 +603,20 @@ class ili9488(ili9XXX):
         miso=5, mosi=18, clk=19, cs=13, dc=12, rst=4, power=14, backlight=15, backlight_on=0, power_on=0,
         spihost=esp.HSPI_HOST, spimode=0, mhz=40, factor=8, hybrid=True, width=320, height=480, colormode=COLOR_MODE_RGB,
         rot=PORTRAIT, invert=False, double_buffer=True, half_duplex=True, asynchronous=False, initialize=True,
-        color_format=None
+        color_format=None, display_type=DISPLAY_TYPE_ILI9488, p16=False
     ):
 
-        if lv.color_t.__SIZE__ != 4:
+        if (lv.color_t.__SIZE__ != 4) and not p16:
             raise RuntimeError('ili9488 micropython driver requires defining LV_COLOR_DEPTH=32')
         if not hybrid:
             raise RuntimeError('ili9488 micropython driver do not support non-hybrid driver')
 
         self.display_name = 'ILI9488'
+        
+        if p16:
+            pix_format = [0x55]
+        else:
+            pix_format = [0x66]
 
         self.init_cmds = [
             {'cmd': 0x01, 'data': bytes([0]), 'delay': 200},
@@ -627,7 +632,7 @@ class ili9488(ili9XXX):
             {'cmd': 0x36, 'data': bytes([
                 self.madctl(colormode, rot, ORIENTATION_TABLE)])},  # MADCTL
 
-            {'cmd': 0x3A, 'data': bytes([0x66])},
+            {'cmd': 0x3A, 'data': bytes(pix_format)},
             {'cmd': 0xB0, 'data': bytes([0x00])},
             {'cmd': 0xB1, 'data': bytes([0xA0])},
             {'cmd': 0xB4, 'data': bytes([0x02])},
@@ -642,82 +647,32 @@ class ili9488(ili9XXX):
         super().__init__(miso=miso, mosi=mosi, clk=clk, cs=cs, dc=dc, rst=rst, power=power, backlight=backlight,
             backlight_on=backlight_on, power_on=power_on, spihost=spihost, spimode=spimode, mhz=mhz, factor=factor, hybrid=hybrid,
             width=width, height=height, invert=invert, double_buffer=double_buffer, half_duplex=half_duplex,
-            display_type=DISPLAY_TYPE_ILI9488, asynchronous=asynchronous, initialize=initialize, color_format=color_format)
+            display_type=display_type, asynchronous=asynchronous, initialize=initialize, color_format=color_format)
 
-class ili9488g(ili9XXX):
+class ili9488g(ili9488):
 
     def __init__(self,
         miso=-1, mosi=23, clk=18, cs=5, dc=27, rst=-1, power=-1, backlight=-1, backlight_on=0, power_on=0,
-        spihost=esp.VSPI_HOST, spimode=0, mhz=80, hybrid=True, width=320, height=480,
+        spihost=esp.VSPI_HOST, spimode=0, mhz=80, factor=8, hybrid=True, width=320, height=480,
         rot=PORTRAIT, invert=False, double_buffer=True, half_duplex=True, asynchronous=False, initialize=True
     ):
-
-        if not hybrid:
-            raise RuntimeError('ili9488 micropython driver do not support non-hybrid driver')
-
-        self.display_name = 'ILI9488g'
 
         if lv.color_t.__SIZE__ == 4:
             colormode=COLOR_MODE_RGB
             color_format=None
             display_type=DISPLAY_TYPE_ILI9488 # 24-bit pixel handling
-            factor=8
-            self.init_cmds = [
-                {'cmd': 0x01, 'data': bytes([0]), 'delay': 200},
-                {'cmd': 0x11, 'data': bytes([0]), 'delay': 120},
-                {'cmd': 0xE0, 'data': bytes([0x00, 0x03, 0x09, 0x08, 0x16, 0x0A, 0x3F, 0x78, 0x4C, 0x09, 0x0A, 0x08, 0x16, 0x1A, 0x0F])},
-                {'cmd': 0xE1, 'data': bytes([0x00, 0x16, 0x19, 0x03, 0x0F, 0x05, 0x32, 0x45, 0x46, 0x04, 0x0E, 0x0D, 0x35, 0x37, 0x0F])},
-                {'cmd': 0xC0, 'data': bytes([0x17, 0x15])}, ### 0x13, 0x13
-                {'cmd': 0xC1, 'data': bytes([0x41])},       ###
-                {'cmd': 0xC2, 'data': bytes([0x44])},       ###
-                {'cmd': 0xC5, 'data': bytes([0x00, 0x12, 0x80])},
-                {'cmd': 0x36, 'data': bytes([
-                    self.madctl(colormode, rot, ORIENTATION_TABLE)])},  # MADCTL
-                {'cmd': 0x3A, 'data': bytes([0x66])},
-                {'cmd': 0xB0, 'data': bytes([0x00])},
-                {'cmd': 0xB1, 'data': bytes([0xA0])},
-                {'cmd': 0xB4, 'data': bytes([0x02])},
-                {'cmd': 0xB6, 'data': bytes([0x02, 0x02])},
-                {'cmd': 0xE9, 'data': bytes([0x00])},
-                {'cmd': 0x53, 'data': bytes([0x28])},
-                {'cmd': 0x51, 'data': bytes([0x7F])},
-                {'cmd': 0xF7, 'data': bytes([0xA9, 0x51, 0x2C, 0x02])},
-                {'cmd': 0x29, 'data': bytes([0]), 'delay': 120}
-            ]
+            p16=False
 
         if lv.color_t.__SIZE__ == 2:
             colormode=COLOR_MODE_BGR
             color_format=lv.COLOR_FORMAT.NATIVE_REVERSE
             display_type=DISPLAY_TYPE_ILI9341 # Force use of 16-bit pixel handling
-            factor=4
-            self.init_cmds = [
-                {'cmd': 0x01, 'data': bytes([0]), 'delay': 200},
-                {'cmd': 0x11, 'data': bytes([0]), 'delay': 120},
-                {'cmd': 0xE0, 'data': bytes([0x00, 0x03, 0x09, 0x08, 0x16, 0x0A, 0x3F, 0x78, 0x4C, 0x09, 0x0A, 0x08, 0x16, 0x1A, 0x0F])},
-                {'cmd': 0xE1, 'data': bytes([0x00, 0x16, 0x19, 0x03, 0x0F, 0x05, 0x32, 0x45, 0x46, 0x04, 0x0E, 0x0D, 0x35, 0x37, 0x0F])},
-                {'cmd': 0xC0, 'data': bytes([0x17, 0x15])}, ### 0x13, 0x13
-                {'cmd': 0xC1, 'data': bytes([0x41])},       ###
-                {'cmd': 0xC2, 'data': bytes([0x44])},       ###
-                {'cmd': 0xC5, 'data': bytes([0x00, 0x12, 0x80])},
-                {'cmd': 0x36, 'data': bytes([
-                    self.madctl(colormode, rot, ORIENTATION_TABLE)])},  # MADCTL
-                {'cmd': 0x3A, 'data': bytes([0x55])}, # 16-bit pixels available via gCore 8-bit parallel interface
-                {'cmd': 0xB0, 'data': bytes([0x00])},
-                {'cmd': 0xB1, 'data': bytes([0xA0])},
-                {'cmd': 0xB4, 'data': bytes([0x02])},
-                {'cmd': 0xB6, 'data': bytes([0x02, 0x02])},
-                {'cmd': 0xE9, 'data': bytes([0x00])},
-                {'cmd': 0x53, 'data': bytes([0x28])},
-                {'cmd': 0x51, 'data': bytes([0x7F])},
-                {'cmd': 0xF7, 'data': bytes([0xA9, 0x51, 0x2C, 0x02])},
-                {'cmd': 0x29, 'data': bytes([0]), 'delay': 120}
-            ]
-
+            p16=True
 
         super().__init__(miso=miso, mosi=mosi, clk=clk, cs=cs, dc=dc, rst=rst, power=power, backlight=backlight,
             backlight_on=backlight_on, power_on=power_on, spihost=spihost, spimode=spimode, mhz=mhz, factor=factor, hybrid=hybrid,
-            width=width, height=height, invert=invert, double_buffer=double_buffer, half_duplex=half_duplex,
-            display_type=display_type, asynchronous=asynchronous, initialize=initialize, color_format=color_format)
+            width=width, height=height, colormode=colormode, rot=rot, invert=invert, double_buffer=double_buffer, half_duplex=half_duplex,
+            asynchronous=asynchronous, initialize=initialize, color_format=color_format, display_type=display_type, p16=p16)
 
 class gc9a01(ili9XXX):
 
