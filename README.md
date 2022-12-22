@@ -23,10 +23,13 @@ Additional demos and ports of other software to gCore are stored in the followin
 3. [gcore_life](https://github.com/danjulio/gcore_life) - Life running on gCore using LVGL.  Shows how to integrate control for gCore into an ESP32 IDF program.
 4. [gcore\_lv\_port_esp32](https://github.com/danjulio/gcore_lv_port_esp32) - The LVGL v7 demo with gCore optimized LCD and touch drivers useful for for ESP32 IDF programs.
 5. [gcore_tank](https://github.com/danjulio/gcore_tank) - An easy-to-build remote controlled vehicle with video feed using gCore and the remote control.
+6. [gcore\_lv\_music_demo](https://github.com/danjulio/gcore_lvgl_music_player) - The LVGL Music Demo running on LVGL v9.
 
-![Life!](Pictures/life.png)
+![LVGL Music Demo](Pictures/lvgl_music_demo.png)
 
 ![Remote Controlled Tank](Pictures/tank_gcore.png)
+
+![Life!](Pictures/life.png)
 
 ### (*) Historical Note
 This is actually my second design.  The original gCore design was based around a "feather" PCB designed to fit under an Adafruit LCD module.  It is documented in the [Original gCore](https://github.com/danjulio/gCore-featherwing) repository.

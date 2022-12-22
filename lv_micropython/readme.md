@@ -9,6 +9,8 @@ The ```ili9XXX.py``` driver is modified to support gCore.  A new class, ```ili94
 3. Change default SPI frequency from 40 MHz to 80 MHz.
 4. Add support for 16-bit pixels (RGB565).  The driver automatically works when Micropython is built with either 32- or 16-bit pixels.  The driver is faster when using 16-bit pixels since less data is transferred and the driver doesn't have to copy data for each update (see ```espidf.c```).
 
+Note: As of Dec 20, 2022, this driver has been incorporated in the official lv_micropython project.
+
 ### FT6x36 Driver
 The existing ```ft6x36.py``` may be used for the touchscreen but needs to be included in the build since it is currently not included by default.  In addition it needs to be specially instantiated to configure it to the necessary 100 kHz I2C clock frequency (since gCore's EFM8 co-processor can't support 400 kHz I2C due to a bug).  See below for instructions to both include it in the build and instance it.
 
@@ -40,7 +42,7 @@ First build ```mpy-cross```
 make -C mpy-cross
 ```
 
-The build and download Micropython to gCore.  You can build it with LVGL configured to use either 16-bit RGB565 pixels or 32-bit RGBA8888 pixels (displayed as RGB666 by the ILI9488).
+Then build and download Micropython to gCore.  You can build it with LVGL configured to use either 16-bit RGB565 pixels or 32-bit RGBA8888 pixels (displayed as RGB666 by the ILI9488).
 
 To build 16-bit LVGL:
 
@@ -60,6 +62,13 @@ Connect to gCore after programming using a serial terminal program set to 115200
 
 ```
 screen [SERIAL_PORT] 115200
+```
+
+#### Clean up build
+You must clean up the build if you change the python driver before rebuilding.
+
+```
+make -C ports/esp32 BOARD=GENERIC_SPIRAM clean
 ```
 
 ### Using the precompiled binaries
