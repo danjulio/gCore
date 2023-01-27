@@ -24,10 +24,13 @@ Additional demos and ports of other software to gCore are stored in the followin
 4. [gcore\_lv\_port_esp32](https://github.com/danjulio/gcore_lv_port_esp32) - The LVGL v7 demo with gCore optimized LCD and touch drivers useful for for ESP32 IDF programs.
 5. [gcore_tank](https://github.com/danjulio/gcore_tank) - An easy-to-build remote controlled vehicle with video feed using gCore and the remote control.
 6. [gcore\_lv\_music_demo](https://github.com/danjulio/gcore_lvgl_music_player) - The LVGL Music Demo running on LVGL v9.
+7. [Galaga](https://github.com/danjulio/gcore_galagino) - A port of Harbaum's Galaga emulator on gCore.
 
-![LVGL Music Demo](Pictures/lvgl_music_demo.png)
+![Galaga on gCore](Pictures/gcore_galaga.png)
 
 ![Remote Controlled Tank](Pictures/tank_gcore.png)
+
+![LVGL Music Demo](Pictures/lvgl_music_demo.png)
 
 ![Life!](Pictures/life.png)
 
