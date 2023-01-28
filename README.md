@@ -2,7 +2,7 @@
 
 ![gCore Top](Pictures/gcore_rev3.png)
  
-This repository contains documentation and example code for an ESP32-based development board I designed to enable building portable GUI-based gadgets (*).  It provides a rich feature set and high performance operation enabling, I hope, all kinds of cool and useful devices such as remote controls, instrument controllers and game platforms.  Code may be written using the ESP32 Arduino environment, Espressif's IDF or Micropython.  Both Adafruit-compatible and [LVGL](https://lvgl.io) LCD drivers are available.
+This repository contains documentation and example code for an ESP32-based development board I designed to enable building portable GUI-based gadgets (*).  It provides a rich feature set and high performance operation enabling, I hope, all kinds of cool and useful devices such as remote controls, instrument controllers and game platforms.  Code may be written using the ESP32 Arduino environment, Espressif's IDF or MicroPython.  Both Adafruit-compatible and [LVGL](https://lvgl.io) LCD drivers are available.
 
 ![gCore based tCam](Pictures/tcam_iron.png)
 (gCore based tCam thermal imaging camera)
@@ -20,11 +20,12 @@ Additional demos and ports of other software to gCore are stored in the followin
 
 1. [TFT_eSPI](https://github.com/danjulio/TFT_eSPI) - A fork of Bodmer's LCD driver library ported to gCore to maximize LCD drawing performance for Arduino programs.  Very fast.
 2. [tCam](https://github.com/danjulio/tCam) - Assembly instructions and firmware for the tCam thermal imaging camera.
-3. [gcore_life](https://github.com/danjulio/gcore_life) - Life running on gCore using LVGL.  Shows how to integrate control for gCore into an ESP32 IDF program.
-4. [gcore\_lv\_port_esp32](https://github.com/danjulio/gcore_lv_port_esp32) - The LVGL v7 demo with gCore optimized LCD and touch drivers useful for for ESP32 IDF programs.
-5. [gcore_tank](https://github.com/danjulio/gcore_tank) - An easy-to-build remote controlled vehicle with video feed using gCore and the remote control.
-6. [gcore\_lv\_music_demo](https://github.com/danjulio/gcore_lvgl_music_player) - The LVGL Music Demo running on LVGL v9.
-7. [Galaga](https://github.com/danjulio/gcore_galagino) - A port of Harbaum's Galaga emulator on gCore.
+3. [MicroPython](https://github.com/danjulio/lv_binding_micropython) - LVGL binding for MicroPython.
+4. [gcore_life](https://github.com/danjulio/gcore_life) - Life running on gCore using LVGL.  Shows how to integrate control for gCore into an ESP32 IDF program.
+5. [gcore\_lv\_port_esp32](https://github.com/danjulio/gcore_lv_port_esp32) - The LVGL v7 demo with gCore optimized LCD and touch drivers useful for for ESP32 IDF programs.
+6. [gcore_tank](https://github.com/danjulio/gcore_tank) - An easy-to-build remote controlled vehicle with video feed using gCore and the remote control.
+7. [gcore\_lv\_music_demo](https://github.com/danjulio/gcore_lvgl_music_player) - The LVGL Music Demo running on LVGL v9.
+8. [Galaga](https://github.com/danjulio/gcore_galagino) - A port of Harbaum's Galaga emulator on gCore.
 
 ![Galaga on gCore](Pictures/gcore_galaga.png)
 
