@@ -4,6 +4,8 @@
  
 This repository contains documentation and example code for an ESP32-based development board I designed to enable building portable GUI-based gadgets (*).  It provides a rich feature set and high performance operation enabling, I hope, all kinds of cool and useful devices such as remote controls, instrument controllers and game platforms.  Code may be written using the ESP32 Arduino environment, Espressif's IDF or MicroPython.  Both Adafruit-compatible and [LVGL](https://lvgl.io) LCD drivers are available.
 
+gCore can be purchased from [tindie](https://www.tindie.com/products/globoy/gcore-high-end-esp32-graphics-dev-board/) or [Group Gets](https://groupgets.com).
+
 ![gCore based tCam](Pictures/tcam_iron.png)
 (gCore based tCam thermal imaging camera)
 
@@ -26,6 +28,7 @@ Additional demos and ports of other software to gCore are stored in the followin
 6. [gcore_tank](https://github.com/danjulio/gcore_tank) - An easy-to-build remote controlled vehicle with video feed using gCore and the remote control.
 7. [gcore\_lv\_music_demo](https://github.com/danjulio/gcore_lvgl_music_player) - The LVGL Music Demo running on LVGL v9.
 8. [Galaga](https://github.com/danjulio/gcore_galagino) - A port of Harbaum's Galaga emulator on gCore.
+9. [MiniWebRadio](https://github.com/danjulio/ESP32-MiniWebRadio) - A port of schreifbfaul1's internet radio/clock program to gCore.
 
 ![Galaga on gCore](Pictures/gcore_galaga.png)
 
@@ -34,6 +37,8 @@ Additional demos and ports of other software to gCore are stored in the followin
 ![LVGL Music Demo](Pictures/lvgl_music_demo.png)
 
 ![Life!](Pictures/life.png)
+
+![MiniWebRadio](Pictures/gCore_MiniWebRadio.png)
 
 ### (*) Historical Note
 This is actually my second design.  The original gCore design was based around a "feather" PCB designed to fit under an Adafruit LCD module.  It is documented in the [Original gCore](https://github.com/danjulio/gCore-featherwing) repository.
