@@ -41,7 +41,7 @@ void com_task(void * parameter)
     }
     
     Serial.println("Connecting to server");
-    if (client.connect(STREAM_URL, STREAM_PORT)) {
+    if (client.connect(STREAM_IP, STREAM_PORT)) {
       // Request stream
       client.println("GET / HTTP/1.0");
       client.println();

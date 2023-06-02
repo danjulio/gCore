@@ -37,7 +37,7 @@ LVGL is configured for a particular project using a ```lv_conf.h``` file located
 2. ```lv_conf_portrait.h``` is used with ```lifx_controller```.
 
 #### tgx
-Because it appears that Arvind Singh is continuing to evolve his amazing 3D [tgx](https://github.com/vindar/tgx) library, I have included the copy of that library I used for the ```joystick_3d``` demo in case the API changes.  This can be found in the ```supporting ``` subdirectory here.
+Because it appears that Arvind Singh is continuing to evolve his amazing 3D [tgx](https://github.com/vindar/tgx) library, I have included the copy of that library I used for the ```joystick_3d``` demo in case the API changes.  This can be found in the ```supporting ``` subdirectory here.  This library may need modification to compile with any of the 2.X ESP32 Arduino board packages.
 
 #### TJpg_Decoder
 Install version 0.0.3 of ```TJpg_Decoder``` if you have ESP32 Arduino version 1.X installed.  Install version 1.0.2 if you have ESP32 Arduino version 2.X installed.  This is because Bodmer made changes to the TJpg\_Decoder library that make version 1.0.2 incompatible with version 1.X ESP32 board support packages (see the explanation [here](https://github.com/Bodmer/TJpg_Decoder/issues/30)).
@@ -174,7 +174,7 @@ Uses the following libraries.
 3. TFT_eSPI for gCore
 
 #### joystick_3d
-A port of Arvind Singh's Naruto demo using his tgx 3D graphic library.  Spin around a model of the character Naruto Uzumaki displayed as a 3D surface with or without a texture map or shading. Makes use of tasks running on both CPUs to improve performance.  Supports an optional Sparkfun [I2C joystick](https://www.sparkfun.com/products/15168) plugged into the Qwiic interface to manually control the view (pan/zoom/switch shaders).  Be sure to uncomment the line ```#define USE_JOYSTICK``` just below the comments at the top of the sketch to include support for the joystick.
+A port of Arvind Singh's Naruto demo using his tgx 3D graphic library.  Spin around a model of the character Naruto Uzumaki displayed as a 3D surface with or without a texture map or shading. Makes use of tasks running on both CPUs to improve performance.  Supports an optional Sparkfun [I2C joystick](https://www.sparkfun.com/products/15168) plugged into the Qwiic interface to manually control the view (pan/zoom/switch shaders).  Be sure to uncomment the line ```#define USE_JOYSTICK``` just below the comments at the top of the sketch to include support for the joystick.  The last ESP32 Arduino package I could compile the tgx library with is 1.0.6.
 
 ![joystick_3d Demo](Pictures/joystick_3d.png)
 

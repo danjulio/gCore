@@ -151,9 +151,11 @@ bool ts_begin()
   uint8_t id = ftReadRegister8(FT62XX_REG_CHIPID);
   if ((id != FT6206_CHIPID) && (id != FT6236_CHIPID) && (id != FT6236U_CHIPID)) {
     Serial.printf("Error: Cannot open FT (id = 0x%x)\n", id);
+    return false;
   } else {
     // Set the threshold
     ftWriteRegister8(FT62XX_REG_THRESHHOLD, FT62XX_DEFAULT_THRESHOLD);
+    return true;
   }
 }
 
