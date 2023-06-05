@@ -30,6 +30,14 @@ Additional demos and ports of other software to gCore are stored in the followin
 8. [Galaga](https://github.com/danjulio/gcore_galagino) - A port of Harbaum's Galaga emulator on gCore.
 9. [MiniWebRadio](https://github.com/danjulio/ESP32-MiniWebRadio) - A port of schreifbfaul1's internet radio/clock program to gCore.
 
+I wrote a desktop app that encapsulates a compiled version of esptool and can download pre-compiled binaries for most of the demos from my [website](https://danjuliodesigns.com/products/gcore.html) and load them into gCore without needing Arduino or the Espressif IDF.
+
+1. [Linux download](https://danjuliodesigns.com/resources/AppSupport/gcore/gsc_0_2_0_Linux_x86_64.zip) - 64-bit x86 architecture version
+2. [Mac OS download](https://danjuliodesigns.com/resources/AppSupport/gcore/gsc_0_2_0_macOS.zip) - 64-bit universal (sadly unsigned so you'll have to authorize it)
+3. [Windows download](https://danjuliodesigns.com/resources/AppSupport/gcore/gsc_0_2_0_Windows64.zip) - 64-bit x86 architecture version
+
+![gCore Serial Programmer](Pictures/gsp_linux.png)
+
 ![Galaga on gCore](Pictures/gcore_galaga.png)
 
 ![Remote Controlled Tank](Pictures/tank_gcore.png)
