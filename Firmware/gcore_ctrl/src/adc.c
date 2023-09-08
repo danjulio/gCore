@@ -18,8 +18,20 @@
  *  4. Temperature sensor measurements every second and averaging over a several second period.
  *  5. Value access routines for other modules.
  *
- * Copyright (c) 2021 danjuliodesigns, LLC.  All rights reserved.
+ * Copyright (c) 2021-2022 danjuliodesigns, LLC.  All rights reserved.
  *
+ * This is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * It is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this software.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
 #include "intrins.h"
@@ -252,16 +264,16 @@ void ADC_Init()
 	// Setup the filtered ADC value filters
 	v = _ADC_GetSingleReading(_ADC_VU_CH);
 	adcFilterSum[ADC_MEAS_VU_INDEX] = (v << ADC_V_FILTER_SHIFT);
-	SMB_SetIndexedValue16(SMB_INDEX16_VU, adc_2_mv[v]);
+	SMB_SetVU(adc_2_mv[v]);
 	v = _ADC_GetSingleReading(_ADC_IU_CH);
 	adcFilterSum[ADC_MEAS_IU_INDEX] = (v << ADC_I_FILTER_SHIFT);
-	SMB_SetIndexedValue16(SMB_INDEX16_IU, adc_2_ma[v]);
+	SMB_SetIU(adc_2_ma[v]);
 	v = _ADC_GetSingleReading(_ADC_VB_CH);
 	adcFilterSum[ADC_MEAS_VB_INDEX] = (v << ADC_V_FILTER_SHIFT);
-	SMB_SetIndexedValue16(SMB_INDEX16_VB, adc_2_mv[v]);
+	SMB_SetVB(adc_2_mv[v]);
 	v = _ADC_GetSingleReading(_ADC_IL_CH);
 	adcFilterSum[ADC_MEAS_IL_INDEX] = (v << ADC_I_FILTER_SHIFT);
-	SMB_SetIndexedValue16(SMB_INDEX16_IL, adc_2_ma[v]);
+	SMB_SetIL(adc_2_ma[v]);
 
 	// Load the temperature averaging arrays
 	v = _ADC_GetSingleReading(_ADC_TI_CH);
@@ -306,7 +318,8 @@ SI_INTERRUPT (TIMER0_ISR, TIMER0_IRQn)
 }
 
 
-// ADC0E0C_IRQ requires ~19-32 uSec
+// ADC0E0C_IRQ requires ~22-27 uSec
+// (greater if blocked while writing to SMBus, typ up to 400 uSec if reading time)
 SI_INTERRUPT (ADC0EOC_ISR, ADC0EOC_IRQn)
 {
 	// Store the ADC result
@@ -423,9 +436,9 @@ void _ADC_PushFilteredVal(uint16_t val, uint8_t index)
 
 		// Push value into SMBUS register
 		if (index & 0x02) {
-			SMB_SetIndexedValue16(SMB_INDEX16_IL, adc_2_ma[v]);
+			SMB_SetIL(adc_2_ma[v]);
 		} else {
-			SMB_SetIndexedValue16(SMB_INDEX16_IU, adc_2_ma[v]);
+			SMB_SetIU(adc_2_ma[v]);
 		}
 	} else {
 		// Update current filter with current sample
@@ -436,9 +449,9 @@ void _ADC_PushFilteredVal(uint16_t val, uint8_t index)
 
 		// Push value into SMBUS register
 		if (index & 0x02) {
-			SMB_SetIndexedValue16(SMB_INDEX16_VB, adc_2_mv[v]);
+			SMB_SetVB(adc_2_mv[v]);
 		} else {
-			SMB_SetIndexedValue16(SMB_INDEX16_VU, adc_2_mv[v]);
+			SMB_SetVU(adc_2_mv[v]);
 		}
 	}
 }
@@ -467,7 +480,7 @@ void _ADC_PushTemp(uint16_t val)
 	tempAvgAdcVal = tempAvgAdcVal >> ADC_TEMP_SHIFT;
 
 	// Push value into SMBUS
-	SMB_SetIndexedValue16(SMB_INDEX16_T, (uint16_t) _adc2IntT10(tempAvgAdcVal));
+	SMB_SetTemp(_adc2IntT10(tempAvgAdcVal));
 }
 
 

@@ -8,23 +8,33 @@
  *
  * Copyright (c) 2021-2022 danjuliodesigns, LLC.  All rights reserved.
  *
+ * This is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * It is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this software.  If not, see <https://www.gnu.org/licenses/>.
+ *
  */
 #include <SI_EFM8SB2_Register_Enums.h>
 #include "adc.h"
 #include "config.h"
 #include "nvram.h"
 #include "rtc.h"
-#include "run.h"
 #include "smbus.h"
-#include "watchdog.h"
 
 
 //-----------------------------------------------------------------------------
 // Variables
 //-----------------------------------------------------------------------------
 static volatile bool in_transfer = false;
-static volatile uint8_t smb_reg_array[SMB_NUM_REG];
-static volatile uint16_t smb_reg16_array[SMB_NUM_REG16];
+static volatile uint8_t SI_SEG_IDATA smb_reg_array[SMB_NUM_REG];
 
 
 
@@ -66,6 +76,9 @@ void SMB_Suspend()
 
 	// Clear ACK
 	SMB0CN0_ACK = 0;
+
+	// Clear out any interrupted transfers
+	in_transfer = false;
 }
 
 
@@ -109,14 +122,37 @@ void SMB_ShutDown()
 
 	// Clear ACK
 	SMB0CN0_ACK = 0;
+
+	// Clear out any interrupted transfers
+	in_transfer = false;
 }
 
 
+// Routines for use by main code to atomically update SMBus values
+// Note: The following mechanisms are used to prevent data corruption
+//       and code lock-up:
+//         1. Multi-byte access routines wait until the SMBus interface
+//            is not busy by polling in_transfer.  Then they immediately
+//            disable SMBus interrupts while accessing the data.  There
+//            is a chance that a SMBus interrupt could occur immediately
+//            after the poll.  However this will occur at the end of the
+//            I2C chip address phase and access of any data is at least
+//            80 uSec away.
+//         2. Multi-byte access routines also disable the ADC ISR to
+//            prevent two things:
+//               a. A possible lock-up condition where the ADC ISR executes
+//                  part-way through the access of the multiple bytes and
+//                  then calls its own SMBus access routine which will then
+//                  hang on the in_transfer poll.
+//               b. An additional delay between the end of an in_transfer
+//                  poll and the disabling of the SMBus ISR due to an ADC
+//                  ISR execution.  This should ensure the Multi-byte transfer
+//                  executes and re-enables the SMBus ISR before the next
+//                  byte is transfered on I2C and the SMBus ISR called again.
+//
 void SMB_SetIndexedValue8(uint8_t index, uint8_t val)
 {
-	SMBUS_DIS_INT();
 	smb_reg_array[index] = val;
-	SMBUS_EN_INT();
 }
 
 
@@ -126,24 +162,103 @@ uint8_t SMB_GetIndexedValue8(uint8_t index)
 }
 
 
-void SMB_SetIndexedValue16(uint8_t index, uint16_t val)
+void SMB_SetTime(uint32_t val)
 {
+	ADC_DIS_INT();
+
+	while (in_transfer == 1) {};
+
 	SMBUS_DIS_INT();
-	smb_reg16_array[index] = val;
+	// Fast array-to-array copy while ISRs disabled
+	smb_reg_array[SMB_INDEX_TIME_H] = *(((uint8_t*) &val) + 0);
+	smb_reg_array[SMB_INDEX_TIME_2] = *(((uint8_t*) &val) + 1);
+	smb_reg_array[SMB_INDEX_TIME_1] = *(((uint8_t*) &val) + 2);
+	smb_reg_array[SMB_INDEX_TIME_L] = *(((uint8_t*) &val) + 3);
 	SMBUS_EN_INT();
+	ADC_EN_INT();
 }
 
 
-uint16_t SMB_GetIndexedValue16(uint8_t index)
+int16_t SMB_GetVB()
 {
 	uint16_t v;
 
-	// Must disable ADC from updating when we read from normal code
 	ADC_DIS_INT();
-	v = smb_reg16_array[index];
+
+	while (in_transfer == 1) {};
+
+	SMBUS_DIS_INT();
+	v = (smb_reg_array[SMB_INDEX_VB_H] << 8) | smb_reg_array[SMB_INDEX_VB_L];
+	SMBUS_EN_INT();
 	ADC_EN_INT();
 
 	return v;
+}
+
+
+uint32_t SMB_GetTime()
+{
+	uint8_t v[4];
+
+	ADC_DIS_INT();
+
+	while (in_transfer == 1) {};
+
+	SMBUS_DIS_INT();
+	// Array to array copy fastest while ISRs disabled
+	v[0] = smb_reg_array[SMB_INDEX_TIME_H];
+	v[1] = smb_reg_array[SMB_INDEX_TIME_2];
+	v[2] = smb_reg_array[SMB_INDEX_TIME_1];
+	v[3] = smb_reg_array[SMB_INDEX_TIME_L];
+	SMBUS_EN_INT();
+	ADC_EN_INT();
+
+	// Get 4-bytes of big-endian data to return
+	return *((uint32_t*) &v[0]);
+}
+
+
+uint32_t SMB_GetAlarm()
+{
+	uint8_t v[4];
+
+	ADC_DIS_INT();
+
+	while (in_transfer == 1) {};
+
+	SMBUS_DIS_INT();
+	// Array to array copy fastest while ISRs disabled
+	v[0] = smb_reg_array[SMB_INDEX_ALRM_H];
+	v[1] = smb_reg_array[SMB_INDEX_ALRM_2];
+	v[2] = smb_reg_array[SMB_INDEX_ALRM_1];
+	v[3] = smb_reg_array[SMB_INDEX_ALRM_L];
+	SMBUS_EN_INT();
+	ADC_EN_INT();
+
+	// Get 4-bytes of big-endian data to return
+	return *((uint32_t*) &v[0]);
+}
+
+
+int32_t SMB_GetCorrect()
+{
+	uint8_t v[4];
+
+	ADC_DIS_INT();
+
+	while (in_transfer == 1) {};
+
+	SMBUS_DIS_INT();
+	// Array to array copy fastest while ISRs disabled
+	v[0] = smb_reg_array[SMB_INDEX_CORR_H];
+	v[1] = smb_reg_array[SMB_INDEX_CORR_2];
+	v[2] = smb_reg_array[SMB_INDEX_CORR_1];
+	v[3] = smb_reg_array[SMB_INDEX_CORR_L];
+	SMBUS_EN_INT();
+	ADC_EN_INT();
+
+	// Get 4-bytes of big-endian data to return
+	return *((uint32_t*) &v[0]);
 }
 
 
@@ -152,17 +267,6 @@ void SMB_SetStatusPowerOnMask(uint8_t mask)
 	// Set the power-on status bit
 	SMBUS_DIS_INT();
 	smb_reg_array[SMB_INDEX_STATUS] = (smb_reg_array[SMB_INDEX_STATUS] & ~SMB_ST_PWR_ON_RSN_MASK) | (mask & SMB_ST_PWR_ON_RSN_MASK);
-
-	// Clear any corresponding set wakeup bit
-	switch (mask) {
-		case RUN_START_ALARM:
-			smb_reg_array[SMB_INDEX_WK_CTRL] &= ~SMB_WK_CTRL_ALARM_MASK;
-			break;
-
-		case RUN_START_CHG:
-			smb_reg_array[SMB_INDEX_WK_CTRL] &= ~(SMB_WK_CTRL_CHRG_START_MASK | SMB_WK_CTRL_CHRG_DONE_MASK);
-			break;
-	}
 	SMBUS_EN_INT();
 }
 
@@ -178,12 +282,67 @@ void SMB_SetStatusBit(uint8_t mask, bool val)
 }
 
 
+// Routines for use by ADC ISR to atomically update SMBus values
+void SMB_SetVU(int16_t val)
+{
+	while (in_transfer == 1) {};
+
+	SMBUS_DIS_INT();
+	smb_reg_array[SMB_INDEX_VU_H] = val >> 8;
+	smb_reg_array[SMB_INDEX_VU_L] = val & 0xFF;
+	SMBUS_EN_INT();
+}
+
+
+void SMB_SetIU(int16_t val)
+{
+	while (in_transfer == 1) {};
+
+	SMBUS_DIS_INT();
+	smb_reg_array[SMB_INDEX_IU_H] = val >> 8;
+	smb_reg_array[SMB_INDEX_IU_L] = val & 0xFF;
+	SMBUS_EN_INT();
+}
+
+
+void SMB_SetVB(int16_t val)
+{
+	while (in_transfer == 1) {};
+
+	SMBUS_DIS_INT();
+	smb_reg_array[SMB_INDEX_VB_H] = val >> 8;
+	smb_reg_array[SMB_INDEX_VB_L] = val & 0xFF;
+	SMBUS_EN_INT();
+}
+
+
+void SMB_SetIL(int16_t val)
+{
+	while (in_transfer == 1) {};
+
+	SMBUS_DIS_INT();
+	smb_reg_array[SMB_INDEX_IL_H] = val >> 8;
+	smb_reg_array[SMB_INDEX_IL_L] = val & 0xFF;
+	SMBUS_EN_INT();
+}
+
+
+void SMB_SetTemp(int16_t val)
+{
+	while (in_transfer == 1) {};
+
+	SMBUS_DIS_INT();
+	smb_reg_array[SMB_INDEX_TEMP_H] = val >> 8;
+	smb_reg_array[SMB_INDEX_TEMP_L] = val & 0xFF;
+	SMBUS_EN_INT();
+}
+
 
 
 //-----------------------------------------------------------------------------
 // SMBUS0_ISR
 //-----------------------------------------------------------------------------
-//  SMBUS0_IRQ requires ~1-5 uSec
+//  SMBUS0_IRQ requires ~2-6 uSec
 //
 SI_INTERRUPT (SMBUS0_ISR, SMBUS0_IRQn)
 {
@@ -200,7 +359,6 @@ SI_INTERRUPT (SMBUS0_ISR, SMBUS0_IRQn)
 	 *  3. Use TIMER3 to automatically clear ACK every 70 uSec (supporting max 100 kHz SCL) while not in a transfer
 	 *     to prevent a potential lock-up condition
 	 */
-
 	if (!in_transfer) {
 		// Assume Start+address received
 		in_transfer = true;
@@ -336,8 +494,6 @@ SI_INTERRUPT (TIMER3_ISR, TIMER3_IRQn)
 //-----------------------------------------------------------------------------
 uint8_t _SMB_ReadRegister(uint16_t reg)
 {
-	uint32_t d32;
-	uint16_t d16;
 	uint8_t d8;
 	uint8_t reg_addr;
 
@@ -346,41 +502,6 @@ uint8_t _SMB_ReadRegister(uint16_t reg)
 	} else {
 		// Mask off upper bits
 		reg_addr = reg & SMB_REG_ADDR_MASK;
-
-		// Special cases for > 8-bit registers
-		if (reg_addr == SMB_INDEX_VU_H) {
-			d16 = smb_reg16_array[SMB_INDEX16_VU];
-			smb_reg_array[SMB_INDEX_VU_H] = d16 >> 8;
-			smb_reg_array[SMB_INDEX_VU_L] = d16 & 0xFF;
-		}
-		else if (reg_addr == SMB_INDEX_IU_H) {
-			d16 = smb_reg16_array[SMB_INDEX16_IU];
-			smb_reg_array[SMB_INDEX_IU_H] = d16 >> 8;
-			smb_reg_array[SMB_INDEX_IU_L] = d16 & 0xFF;
-		}
-		else if (reg_addr == SMB_INDEX_VB_H) {
-			d16 = smb_reg16_array[SMB_INDEX16_VB];
-			smb_reg_array[SMB_INDEX_VB_H] = d16 >> 8;
-			smb_reg_array[SMB_INDEX_VB_L] = d16 & 0xFF;
-		}
-		else if (reg_addr == SMB_INDEX_IL_H) {
-			d16 = smb_reg16_array[SMB_INDEX16_IL];
-			smb_reg_array[SMB_INDEX_IL_H] = d16 >> 8;
-			smb_reg_array[SMB_INDEX_IL_L] = d16 & 0xFF;
-		}
-		else if (reg_addr == SMB_INDEX_TEMP_H) {
-			d16 = smb_reg16_array[SMB_INDEX16_T];
-			smb_reg_array[SMB_INDEX_TEMP_H] = d16 >> 8;
-			smb_reg_array[SMB_INDEX_TEMP_L] = d16 & 0xFF;
-		}
-		else if (reg_addr == SMB_INDEX_TIME_H) {
-			// Atomically get all 4 RTC bytes when we read the MSbyte
-			d32 = RTC_GetTime();
-			for (d8 = SMB_INDEX_TIME_L; d8 >= SMB_INDEX_TIME_H; d8--) {
-				smb_reg_array[d8] = d32 & 0xFF;
-				d32 = d32 >> 8;
-			}
-		}
 
 		d8 = smb_reg_array[reg_addr];
 
@@ -397,17 +518,19 @@ uint8_t _SMB_ReadRegister(uint16_t reg)
 
 void _SMB_WriteRegister(uint16_t reg, uint8_t d)
 {
+	uint8_t reg_addr;
+
 	if (reg < NVRAM_LEN) {
 		NVRAM_Write(reg, d);
 	} else {
 		// Mask off upper bits
-		reg &= SMB_REG_ADDR_MASK;
+		reg_addr = reg & SMB_REG_ADDR_MASK;
 
-		if (reg >= SMB_INDEX_RW_START) {
-			smb_reg_array[reg] = d;
+		if (reg_addr >= SMB_INDEX_RW_START) {
+			smb_reg_array[reg_addr] = d;
 
 			// Special case for RTC Time setting
-			if (reg == SMB_INDEX_TIME_L) {
+			if (reg_addr == SMB_INDEX_TIME_L) {
 				RTC_SetTimeTrigger();
 			}
 		}

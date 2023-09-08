@@ -498,14 +498,21 @@ extern void RTC_0_enter_SleepMode_from_RESET(void) {
 	// [CAPTURE3 - RTC Timer Capture 3]$
 
 	// $[ALARM0 - RTC Alarm Programmed Value 0]
+	/***********************************************************************
+	 - RTC Alarm Programmed Value 0 = 0xFE
+	 ***********************************************************************/
+	RTC0ADR = ALARM0;
+	RTC0DAT = (0xFE << ALARM0_ALARM0__SHIFT);
+	while ((RTC0ADR & RTC0ADR_BUSY__BMASK) == RTC0ADR_BUSY__SET)
+		;    //Poll Busy Bit
 	// [ALARM0 - RTC Alarm Programmed Value 0]$
 
 	// $[ALARM1 - RTC Alarm Programmed Value 1]
 	/***********************************************************************
-	 - RTC Alarm Programmed Value 1 = 0x80
+	 - RTC Alarm Programmed Value 1 = 0x7F
 	 ***********************************************************************/
 	RTC0ADR = ALARM1;
-	RTC0DAT = (0x80 << ALARM1_ALARM1__SHIFT);
+	RTC0DAT = (0x7F << ALARM1_ALARM1__SHIFT);
 	while ((RTC0ADR & RTC0ADR_BUSY__BMASK) == RTC0ADR_BUSY__SET)
 		;    //Poll Busy Bit
 	// [ALARM1 - RTC Alarm Programmed Value 1]$
@@ -704,6 +711,19 @@ extern void INTERRUPT_0_enter_SleepMode_from_RESET(void) {
 	// [EIE1 - Extended Interrupt Enable 1]$
 
 	// $[EIP1 - Extended Interrupt Priority 1]
+	/***********************************************************************
+	 - ADC0 Conversion Complete interrupt set to low priority level
+	 - ADC0 Window interrupt set to low priority level
+	 - CP0 interrupt set to low priority level
+	 - CP1 interrupt set to low priority level
+	 - PCA0 interrupt set to low priority level
+	 - RTC Alarm interrupt set to high priority level
+	 - SMB0 interrupt set to low priority level
+	 - Timer 3 interrupts set to low priority level
+	 ***********************************************************************/
+	EIP1 = EIP1_PADC0__LOW | EIP1_PWADC0__LOW | EIP1_PCP0__LOW | EIP1_PCP1__LOW
+			| EIP1_PPCA0__LOW | EIP1_PRTC0A__HIGH | EIP1_PSMB0__LOW
+			| EIP1_PT3__LOW;
 	// [EIP1 - Extended Interrupt Priority 1]$
 
 	// $[IE - Interrupt Enable]
@@ -1421,12 +1441,12 @@ extern void INTERRUPT_0_enter_RunMode_from_ClockMode(void) {
 	 - CP0 interrupt set to low priority level
 	 - CP1 interrupt set to low priority level
 	 - PCA0 interrupt set to low priority level
-	 - RTC Alarm interrupt set to low priority level
+	 - RTC Alarm interrupt set to high priority level
 	 - SMB0 interrupt set to high priority level
 	 - Timer 3 interrupts set to high priority level
 	 ***********************************************************************/
 	EIP1 = EIP1_PADC0__LOW | EIP1_PWADC0__LOW | EIP1_PCP0__LOW | EIP1_PCP1__LOW
-			| EIP1_PPCA0__LOW | EIP1_PRTC0A__LOW | EIP1_PSMB0__HIGH
+			| EIP1_PPCA0__LOW | EIP1_PRTC0A__HIGH | EIP1_PSMB0__HIGH
 			| EIP1_PT3__HIGH;
 	// [EIP1 - Extended Interrupt Priority 1]$
 
@@ -1806,12 +1826,12 @@ extern void INTERRUPT_0_enter_SleepMode_from_RunMode(void) {
 	 - CP0 interrupt set to low priority level
 	 - CP1 interrupt set to low priority level
 	 - PCA0 interrupt set to low priority level
-	 - RTC Alarm interrupt set to low priority level
+	 - RTC Alarm interrupt set to high priority level
 	 - SMB0 interrupt set to low priority level
 	 - Timer 3 interrupts set to low priority level
 	 ***********************************************************************/
 	EIP1 = EIP1_PADC0__LOW | EIP1_PWADC0__LOW | EIP1_PCP0__LOW | EIP1_PCP1__LOW
-			| EIP1_PPCA0__LOW | EIP1_PRTC0A__LOW | EIP1_PSMB0__LOW
+			| EIP1_PPCA0__LOW | EIP1_PRTC0A__HIGH | EIP1_PSMB0__LOW
 			| EIP1_PT3__LOW;
 	// [EIP1 - Extended Interrupt Priority 1]$
 

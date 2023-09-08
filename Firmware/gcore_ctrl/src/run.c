@@ -2,6 +2,20 @@
  * run.c
  *
  * Copyright (c) 2021 danjuliodesigns, LLC.  All rights reserved.
+ *
+ * This is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * It is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this software.  If not, see <https://www.gnu.org/licenses/>.
+ *
  */
 #include <SI_EFM8SB2_Register_Enums.h>
 #include "adc.h"
@@ -54,7 +68,7 @@ void RUN_Task(uint8_t startup_mask)
 
 	// First, check battery voltage
 	ADC_Init();
-	if ((SMB_GetIndexedValue16(SMB_INDEX16_VB) < BATT_TURN_ON_MIN_MV) &&
+	if ((SMB_GetVB() < BATT_TURN_ON_MIN_MV) &&
 		(GPIO_GetChargeState() != CHG_STATE_ON)) {
 
 		// Battery voltage too low for turn-on and not charging: return to sleep
@@ -100,7 +114,7 @@ static void RUN_Eval(uint8_t startup_mask)
 	bool batt_ok;
 	uint8_t wakeup_reg;
 
-	batt_ok = (SMB_GetIndexedValue16(SMB_INDEX16_VB) >= BATT_TURN_ON_MIN_MV);
+	batt_ok = (SMB_GetVB() >= BATT_TURN_ON_MIN_MV);
 	wakeup_reg = SMB_GetIndexedValue8(SMB_INDEX_WK_CTRL);
 
 	switch (run_state) {
@@ -109,15 +123,18 @@ static void RUN_Eval(uint8_t startup_mask)
 		if (((startup_mask & RUN_START_ALARM) != 0) && ((wakeup_reg & SMB_WK_CTRL_ALARM_MASK) != 0) && batt_ok) {
 
 			SMB_SetStatusPowerOnMask(RUN_START_ALARM);
+			SMB_SetIndexedValue8(SMB_INDEX_WK_CTRL, 0);
 			RTC_ClearAlarm();
 			RUN_SetState(RUN_ST_POWER);
 		}
 		else if ((startup_mask & RUN_START_CHG) != 0) {
 			if (((wakeup_reg & SMB_WK_CTRL_CHRG_START_MASK) != 0) && (GPIO_GetChargeState() == CHG_STATE_ON) && batt_ok) {
 				SMB_SetStatusPowerOnMask(RUN_START_CHG);
+				SMB_SetIndexedValue8(SMB_INDEX_WK_CTRL, 0);
 				RUN_SetState(RUN_ST_POWER);
 			} else if (((wakeup_reg & SMB_WK_CTRL_CHRG_DONE_MASK) != 0) && (GPIO_GetChargeState() == CHG_STATE_DONE) && batt_ok) {
 				SMB_SetStatusPowerOnMask(RUN_START_CHG);
+				SMB_SetIndexedValue8(SMB_INDEX_WK_CTRL, 0);
 				RUN_SetState(RUN_ST_POWER);
 			} else if (GPIO_GetChargeState() != CHG_STATE_OFF) {
 				RUN_SetState(RUN_ST_CHARGE);
@@ -141,12 +158,14 @@ static void RUN_Eval(uint8_t startup_mask)
 		if (batt_ok) {
 			if (RTC_SawAlarm() && ((wakeup_reg & SMB_WK_CTRL_ALARM_MASK) != 0)) {
 				SMB_SetStatusPowerOnMask(RUN_START_ALARM);
+				SMB_SetIndexedValue8(SMB_INDEX_WK_CTRL, 0);
 				RTC_ClearAlarm();
 				RUN_SetState(RUN_ST_POWER);
 			} else if (GPIO_ButtonShortPeriodExpired()) {
 				RUN_SetState(RUN_ST_WAIT);
 			} else if ((GPIO_GetChargeState() == CHG_STATE_DONE) && ((wakeup_reg & SMB_WK_CTRL_CHRG_DONE_MASK) != 0)) {
 				SMB_SetStatusPowerOnMask(RUN_START_CHG);
+				SMB_SetIndexedValue8(SMB_INDEX_WK_CTRL, 0);
 				RUN_SetState(RUN_ST_POWER);
 			}
 
@@ -164,6 +183,7 @@ static void RUN_Eval(uint8_t startup_mask)
 		// Wait for button to be released
 		if (!GPIO_ButtonDown()) {
 			SMB_SetStatusPowerOnMask(RUN_START_BTN);
+			SMB_SetIndexedValue8(SMB_INDEX_WK_CTRL, 0);
 			RUN_SetState(RUN_ST_POWER);
 
 			// Clear any indication of a long press in case they held the button down for a long time
@@ -177,7 +197,7 @@ static void RUN_Eval(uint8_t startup_mask)
 
 	case RUN_ST_POWER:
 		// Evaluate critical battery detection
-		if (SMB_GetIndexedValue16(SMB_INDEX16_VB) < BATT_CRIT_MV) {
+		if (SMB_GetVB() < BATT_CRIT_MV) {
 			if (crit_batt_timer == BATT_CRIT_TO_MSEC) {
 				SMB_SetStatusBit(SMB_ST_CRIT_BATT_MASK, true);
 			}

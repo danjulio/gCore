@@ -18,6 +18,7 @@
     <property object="HFOSC_0" propertyId="ABPeripheral.included" value="true"/>
     <property object="INTERRUPT_0" propertyId="ABPeripheral.included" value="true"/>
     <property object="INTERRUPT_0" propertyId="interrupt.extendedinterruptenable1.enablertcalarminterrupt" value="Enabled"/>
+    <property object="INTERRUPT_0" propertyId="interrupt.extendedinterruptpriority1.rtcalarmprioritycontrolinterrupt" value="High priority"/>
     <property object="INTERRUPT_0" propertyId="interrupt.interruptenable.enableallinterrupts" value="Enabled"/>
     <property object="P0.0" propertyId="ports.settings.inputmode" value="Analog"/>
     <property object="P0.0" propertyId="ports.settings.iomode" value="Analog I/O"/>
@@ -95,14 +96,15 @@
     <property object="RSTSRC_0" propertyId="ABPeripheral.included" value="true"/>
     <property object="RSTSRC_0" propertyId="rstsrc.resetsources.supplymonitorreset" value="Enabled"/>
     <property object="RTC_0" propertyId="ABPeripheral.included" value="true"/>
-    <property object="RTC_0" propertyId="rtc.hidden.rtcalarmprogrammedvalue1" value="128"/>
+    <property object="RTC_0" propertyId="rtc.hidden.rtcalarmprogrammedvalue0" value="254"/>
+    <property object="RTC_0" propertyId="rtc.hidden.rtcalarmprogrammedvalue1" value="127"/>
     <property object="RTC_0" propertyId="rtc.hidden.rtcloadcapacitanceprogrammedvalue" value="14"/>
-    <property object="RTC_0" propertyId="rtc.rtcalarm.actualalarmperiod" value="1000.00 milliseconds"/>
-    <property object="RTC_0" propertyId="rtc.rtcalarm.alarmprogrammedvalue" value="32768"/>
+    <property object="RTC_0" propertyId="rtc.rtcalarm.actualalarmperiod" value="999.94 milliseconds"/>
+    <property object="RTC_0" propertyId="rtc.rtcalarm.alarmprogrammedvalue" value="32766"/>
     <property object="RTC_0" propertyId="rtc.rtcalarm.enablealarmautoreset" value="Enabled"/>
     <property object="RTC_0" propertyId="rtc.rtcalarm.enablertcalarm" value="Enabled"/>
     <property object="RTC_0" propertyId="rtc.rtcalarm.rtcoscillatorfrequency" value="32768"/>
-    <property object="RTC_0" propertyId="rtc.rtcalarm.targetalarmperiod" value="1000.00"/>
+    <property object="RTC_0" propertyId="rtc.rtcalarm.targetalarmperiod" value="999.94"/>
     <property object="RTC_0" propertyId="rtc.rtcconfiguration.loadcapacitanceprogrammedvalue" value="12.5 pF"/>
     <property object="RTC_0" propertyId="rtc.rtcconfiguration.rtcoscillatormode" value="Crystal mode"/>
     <property object="RTC_0" propertyId="rtc.rtccontrol.enablertcoscillator" value="Enabled"/>
@@ -146,6 +148,7 @@
     <property object="HFOSC_0" propertyId="ABPeripheral.included" value="true"/>
     <property object="INTERRUPT_0" propertyId="ABPeripheral.included" value="true"/>
     <property object="INTERRUPT_0" propertyId="interrupt.extendedinterruptenable1.enablertcalarminterrupt" value="Enabled"/>
+    <property object="INTERRUPT_0" propertyId="interrupt.extendedinterruptpriority1.rtcalarmprioritycontrolinterrupt" value="High priority"/>
     <property object="INTERRUPT_0" propertyId="interrupt.interruptenable.enableallinterrupts" value="Enabled"/>
     <property object="P0.0" propertyId="ports.settings.inputmode" value="Analog"/>
     <property object="P0.0" propertyId="ports.settings.iomode" value="Analog I/O"/>
@@ -218,14 +221,15 @@
     <property object="RSTSRC_0" propertyId="ABPeripheral.included" value="true"/>
     <property object="RSTSRC_0" propertyId="rstsrc.resetsources.supplymonitorreset" value="Enabled"/>
     <property object="RTC_0" propertyId="ABPeripheral.included" value="true"/>
-    <property object="RTC_0" propertyId="rtc.hidden.rtcalarmprogrammedvalue1" value="128"/>
+    <property object="RTC_0" propertyId="rtc.hidden.rtcalarmprogrammedvalue0" value="254"/>
+    <property object="RTC_0" propertyId="rtc.hidden.rtcalarmprogrammedvalue1" value="127"/>
     <property object="RTC_0" propertyId="rtc.hidden.rtcloadcapacitanceprogrammedvalue" value="14"/>
-    <property object="RTC_0" propertyId="rtc.rtcalarm.actualalarmperiod" value="1000.00 milliseconds"/>
-    <property object="RTC_0" propertyId="rtc.rtcalarm.alarmprogrammedvalue" value="32768"/>
+    <property object="RTC_0" propertyId="rtc.rtcalarm.actualalarmperiod" value="999.94 milliseconds"/>
+    <property object="RTC_0" propertyId="rtc.rtcalarm.alarmprogrammedvalue" value="32766"/>
     <property object="RTC_0" propertyId="rtc.rtcalarm.enablealarmautoreset" value="Enabled"/>
     <property object="RTC_0" propertyId="rtc.rtcalarm.enablertcalarm" value="Enabled"/>
     <property object="RTC_0" propertyId="rtc.rtcalarm.rtcoscillatorfrequency" value="32768"/>
-    <property object="RTC_0" propertyId="rtc.rtcalarm.targetalarmperiod" value="1000.00"/>
+    <property object="RTC_0" propertyId="rtc.rtcalarm.targetalarmperiod" value="999.94"/>
     <property object="RTC_0" propertyId="rtc.rtcconfiguration.loadcapacitanceprogrammedvalue" value="12.5 pF"/>
     <property object="RTC_0" propertyId="rtc.rtcconfiguration.rtcoscillatormode" value="Crystal mode"/>
     <property object="RTC_0" propertyId="rtc.rtccontrol.enablertcoscillator" value="Enabled"/>
@@ -273,6 +277,7 @@
     <property object="INTERRUPT_0" propertyId="interrupt.extendedinterruptenable1.enablertcalarminterrupt" value="Enabled"/>
     <property object="INTERRUPT_0" propertyId="interrupt.extendedinterruptenable1.enablesmbussmb0interrupt" value="Enabled"/>
     <property object="INTERRUPT_0" propertyId="interrupt.extendedinterruptenable1.enabletimer3interrupt" value="Enabled"/>
+    <property object="INTERRUPT_0" propertyId="interrupt.extendedinterruptpriority1.rtcalarmprioritycontrolinterrupt" value="High priority"/>
     <property object="INTERRUPT_0" propertyId="interrupt.extendedinterruptpriority1.smbussmb0prioritycontrolinterrupt" value="High priority"/>
     <property object="INTERRUPT_0" propertyId="interrupt.extendedinterruptpriority1.timer3prioritycontrolinterrupt" value="High priority"/>
     <property object="INTERRUPT_0" propertyId="interrupt.interruptenable.enableallinterrupts" value="Enabled"/>
@@ -355,14 +360,15 @@
     <property object="RSTSRC_0" propertyId="ABPeripheral.included" value="true"/>
     <property object="RSTSRC_0" propertyId="rstsrc.resetsources.supplymonitorreset" value="Enabled"/>
     <property object="RTC_0" propertyId="ABPeripheral.included" value="true"/>
-    <property object="RTC_0" propertyId="rtc.hidden.rtcalarmprogrammedvalue1" value="128"/>
+    <property object="RTC_0" propertyId="rtc.hidden.rtcalarmprogrammedvalue0" value="254"/>
+    <property object="RTC_0" propertyId="rtc.hidden.rtcalarmprogrammedvalue1" value="127"/>
     <property object="RTC_0" propertyId="rtc.hidden.rtcloadcapacitanceprogrammedvalue" value="14"/>
-    <property object="RTC_0" propertyId="rtc.rtcalarm.actualalarmperiod" value="1000.00 milliseconds"/>
-    <property object="RTC_0" propertyId="rtc.rtcalarm.alarmprogrammedvalue" value="32768"/>
+    <property object="RTC_0" propertyId="rtc.rtcalarm.actualalarmperiod" value="999.94 milliseconds"/>
+    <property object="RTC_0" propertyId="rtc.rtcalarm.alarmprogrammedvalue" value="32766"/>
     <property object="RTC_0" propertyId="rtc.rtcalarm.enablealarmautoreset" value="Enabled"/>
     <property object="RTC_0" propertyId="rtc.rtcalarm.enablertcalarm" value="Enabled"/>
     <property object="RTC_0" propertyId="rtc.rtcalarm.rtcoscillatorfrequency" value="32768"/>
-    <property object="RTC_0" propertyId="rtc.rtcalarm.targetalarmperiod" value="1000.00"/>
+    <property object="RTC_0" propertyId="rtc.rtcalarm.targetalarmperiod" value="999.94"/>
     <property object="RTC_0" propertyId="rtc.rtcconfiguration.loadcapacitanceprogrammedvalue" value="12.5 pF"/>
     <property object="RTC_0" propertyId="rtc.rtcconfiguration.rtcoscillatormode" value="Crystal mode"/>
     <property object="RTC_0" propertyId="rtc.rtccontrol.enablertcoscillator" value="Enabled"/>

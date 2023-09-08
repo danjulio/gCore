@@ -3,7 +3,20 @@
  *
  * Header for SMBus access module
  *
- * Copyright (c) 2021-2022 danjuliodesigns, LLC.  All rights reserved.
+ * Copyright (c) 2021-2023 danjuliodesigns, LLC.  All rights reserved.
+ *
+ * This is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * It is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this software.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
 
@@ -61,18 +74,6 @@
 // Number and mask for registers (must be power-of-two and match)
 #define SMB_NUM_REG        32
 #define SMB_REG_ADDR_MASK  0x1F
-
-// Internal 16-bit register backing array to allow atomic access
-//
-// Indices
-#define SMB_INDEX16_VU     0
-#define SMB_INDEX16_IU     1
-#define SMB_INDEX16_VB     2
-#define SMB_INDEX16_IL     3
-#define SMB_INDEX16_T      4
-
-// Number of 16-bit backing registers
-#define SMB_NUM_REG16      5
 
 
 // Register masks
@@ -142,10 +143,20 @@ void SMB_ShutDown();  // Designed to be called before sleep to prevent a bus han
 // Routines for use by main code to atomically update SMBus values
 void SMB_SetIndexedValue8(uint8_t index, uint8_t val);
 uint8_t SMB_GetIndexedValue8(uint8_t index);
-void SMB_SetIndexedValue16(uint8_t index, uint16_t val);
-uint16_t SMB_GetIndexedValue16(uint8_t index);
+void SMB_SetTime(uint32_t val);
+int16_t SMB_GetVB();
+uint32_t SMB_GetTime();
+uint32_t SMB_GetAlarm();
+int32_t SMB_GetCorrect();
 void SMB_SetStatusPowerOnMask(uint8_t mask);
 void SMB_SetStatusBit(uint8_t mask, bool val);
+
+// Routines for use by ADC ISR to atomically update SMBus values
+void SMB_SetVU(int16_t val);
+void SMB_SetIU(int16_t val);
+void SMB_SetVB(int16_t val);
+void SMB_SetIL(int16_t val);
+void SMB_SetTemp(int16_t val);
 
 // Interrupt macros
 #define SMBUS_DIS_INT() EIE1 &= ~EIE1_ESMB0__BMASK

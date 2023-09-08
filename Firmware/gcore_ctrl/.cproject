@@ -103,6 +103,7 @@
 									<listOptionValue builtIn="false" value="&quot;${StudioSdkPath}/Device/shared/si8051Base&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${StudioSdkPath}/Device/EFM8SB2/inc&quot;"/>
 								</option>
+								<option id="com.silabs.ide.si8051.keil.compiler.category.listing.assembly.172700001" superClass="com.silabs.ide.si8051.keil.compiler.category.listing.assembly" value="true" valueType="boolean"/>
 								<inputType id="com.silabs.ide.si8051.keil.compiler.inputType.2102999152" superClass="com.silabs.ide.si8051.keil.compiler.inputType"/>
 							</tool>
 							<tool command="AX51" id="com.silabs.ide.si8051.keil.toolchain.assembler.151794685" name="Keil 8051 Assembler" superClass="com.silabs.ide.si8051.keil.toolchain.assembler">
