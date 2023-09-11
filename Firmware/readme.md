@@ -108,3 +108,17 @@ The sketch will display an error message if any part of the programming sequence
 It's also possible to solder the Arduino wires to gCore as shown in the following image.  Use a fine wire (I love 30 AWG silicon sleeve wire) and small amounts of solder.  Be sure both the Arduino and gCore are unpowered while soldering and unsoldering.  Take care unsoldering as it is easy to pull the test points off the PCB.
 
 ![Picture of wired assembly](Pictures/soldered_wires.png)
+
+#### Using the Silicon Labs USB Debug Adapter
+
+![Silicon Labs USB Debug Adapter](Pictures/usb_debug_adapter.png)
+
+You will be connecting the same C2 interface pins to gCore: Common ground, clock and data.  In this case use male-male Dupont style wires.
+
+![USB Debug Adapter Pins](Pictures/usb_debug_adapter_pins.png)
+
+| USB Debug Adapter | gCore |
+| --- | --- |
+| 9 - GND | G pad on PCB Bottom |
+| 4 - TCK / C2D  | D pad on PCB Bottom |
+| 7 - TDI / C2CK | C pad on PCB Bottom |
